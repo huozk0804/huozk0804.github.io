@@ -10,7 +10,7 @@ social:
   email: huozk0804@126.com
   github: //github.com/huozk0804
   # wechat should be a path of qr-code image path
-  wechat: /assets/example_qr.png
+  # wechat: /assets/example_qr.png
   # qq should be a path of qr-code image path
   qq: 
   telegram: 
@@ -24,7 +24,7 @@ social:
   segmentFault: 
   juejin: 
   v2ex: 
-  bilibili: 
+  bilibili: //space.bilibili.com/279014900
   linkedin: 
   steam: 
   others: 
@@ -84,7 +84,7 @@ _404_image: '/intro/404-bg.jpg'
 # Truncate length of abstracts in index page (the default is 300, there will be no abstruct if you input 0)
 truncate_length: 300
 # Show read more button if using excerpt or abstract to display abstracts in index page
-read_more_button: false
+read_more_button: true
 # Enable toc
 toc: true
 # Word count & Reading time
