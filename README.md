@@ -1,4 +1,4 @@
-# MyBolg
+# MyBlog
 
 https://huozk.cn
 
@@ -9,8 +9,10 @@ https://huozk.cn
 
 ### 下载正常使用步骤
 
+0. npm install -g hexo-cli
 1. npm install
 2. npm install hexo-generator-json-content
 3. npm install hexo-wordcount
 4. npm install hexo-generator-feed --save
 5. npm install hexo-math --save
+6. npm install hexo-deployer-git --save
