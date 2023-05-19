@@ -21,7 +21,7 @@
     <meta name="description" content="">
     <meta property="og:type" content="website">
 <meta property="og:title" content="一剑光寒耀九州">
-<meta property="og:url" content="http://huozk.cn/index.html">
+<meta property="og:url" content="http://huozk.cn/categories/Catlike-Coding-Unity-Tutorial/index.html">
 <meta property="og:site_name" content="一剑光寒耀九州">
 <meta property="og:locale" content="en_US">
 <meta property="article:author" content="Nil">
@@ -222,10 +222,8 @@
         }
     </script>
     
-        <body class="home-body">
-    
         <!-- header -->
-        <header class="header header-mobile index-header">
+        <header class="header header-mobile">
     <!-- top read progress line -->
     <div class="header-element">
         <div class="read-progress"></div>
@@ -256,7 +254,7 @@
 </header>
 
         <!-- fixed footer -->
-        <footer class="footer-fixed index-footer-fixed">
+        <footer class="footer-fixed">
     <!-- back to top button -->
     <div class="footer-fixed-element">
         
@@ -279,34 +277,21 @@
 
 
 
-    height:50vh;
-
 ">
     
     <!-- 主页  -->
     
-        
-    <!-- 文章页  -->
-    
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/intro/index-bg.jpg)"></div>
+    <div class="site-intro-img" style="background-image: url(/)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
             
-                一剑光寒耀九州
-            <!-- 文章页  -->
-            
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
-            
-                
-                    十步杀一人,千里不留行;事了拂衣去,深藏身与名
-                
-            <!-- 文章页  -->
             
         </p>
         <!-- 文章页 meta -->
@@ -559,330 +544,11 @@
         </article>
         <div class="index-post-divider"></div>
     
-        
-        
-        
-        
-            
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2022/01/unity-manager-intro/">
-                
-                <span class="abstract-title-text">Unity项目架构设计与开发管理</span>
-            </a>
-            <div class="abstract-content">
-                <p>笔者是观摩刘钢先生讲解的<a target="_blank" rel="noopener" href="https://v.qq.com/x/page/d016340mkcu.html">Unity项目架构设计与开发管理</a>后所总结记录的。</p>
-<h2 id="EmptyGo"><a href="#EmptyGo" class="headerlink" title="EmptyGo"></a>EmptyGo</h2><p>将所有的代码放到一个空的游戏对象中；<br>使用 <code>GameObject.Find()</code> 来找到目标进行使用。<br>架构设计的雏形实现，缺点是当我们的项目越来越大的时候难以灵活管理；不适合大型项目。</p>
-<h2 id="Simple-GameManager"><a href="#Simple-GameManager" class="headerlink" title="Simple GameManager"></a>Simple GameManager</h2><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GameManager.Instance.playSound(<span class="string">&quot;menu&quot;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>优点是： 是把EmptyGO做成一个单例来使用；比较适合小型项目；空物体进行全局引用。 缺点是： 把所有的逻辑都放在一个脚本中，不利于编译；而且会造成单一文件过于庞大；NO 即插即用。</p>
-<h2 id="Manager-Of-Managers"><a href="#Manager-Of-Managers" class="headerlink" title="Manager Of Managers"></a>Manager Of Managers</h2><p>类似于分级结构，各司其职；比如音频管理，场景管理，关卡管理等，每一个都是一个单例脚本，配合使用。结构相对清晰。</p>
-<ul>
-<li>MainManager</li>
-<li>EventManager：消息传递管理</li>
-<li>AudioManager：音效管理</li>
-<li>GUIManager：图形视图管理</li>
-<li>PoolManager：GO管理</li>
-<li>LevelManager： 关卡管理</li>
-<li>GameManager：核心机制管理</li>
-<li>SaveManager：游戏进度管理</li>
-<li>MenuManager：菜单行为动画管理</li>
-<li>…</li>
-</ul>
-<h2 id="MVCS（StrangeIOC）"><a href="#MVCS（StrangeIOC）" class="headerlink" title="MVCS（StrangeIOC）"></a>MVCS（StrangeIOC）</h2>
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2023/05/19">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/01/19</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Unity"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Unity
-            </span>
-        </span>
-    
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="unity-framework">unity-framework</a>
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2021/12/project-list-clear/">
-                
-                <span class="abstract-title-text">保持Unity项目结构清晰的7种方法</span>
-            </a>
-            <div class="abstract-content">
-                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>前几天我在Quora上看到的一个人，询问程序员如何编写包含10,000多行代码以上的项目。当软件变大时，维护起来就更困难了，这是事实。所以这就是事情 – 如果你不保持你的项目井然有序，你将很难跟上节奏。稍后，您会发现自己把更多的时间浪费在处理混乱的项目，而不是添加新功能。任何Unity项目都是这样。以下是（在我看来）比较重要的建议，可以帮助保持项目的有序性。</p>
-<h2 id="资源目录结构"><a href="#资源目录结构" class="headerlink" title="资源目录结构"></a>资源目录结构</h2><p>如果不提及组织项目目录结构，我们就不能谈论组织。Unity在这方面给你一个完全的自由，但正因为如此，它经常变得非常混乱。这是我个人使用的目录结构：</p>
-<ul>
-<li>3rd-Party</li>
-<li>Animations</li>
-<li>Audio</li>
-<li>Music</li>
-<li>SFX</li>
-<li>Materials</li>
-<li>Models</li>
-<li>Plugins</li>
-<li>Prefabs</li>
-<li>Resources</li>
-<li>Textures</li>
-<li>Sandbox</li>
-<li>Scenes</li>
-<li>Levels</li>
-<li>Other</li>
-<li>Scripts</li>
-<li>Editor</li>
-<li>Shaders</li>
-</ul>
-<h3 id="注意："><a href="#注意：" class="headerlink" title="注意："></a>注意：</h3><ul>
-<li>不要将任何资源存放在根目录中。尽可能使用子目录。</li>
-<li>除非确实需要，否则不要在根目录中创建任何其他目录。</li>
-<li>与命名保持一致。如果您决定将camel case用于目录名称和低字母用于资产，请坚持使用该约定。</li>
-<li>不要尝试将特定于上下文的资源移动到常规目录。例如，如果从模型生成材质，请不要将它们移动到Materials目录，因为稍后您将不知道它们来自何处。</li>
-<li>使用第三方存储从资源商店导入的资源。它们通常有自己的结构，不应该改变。</li>
-<li>使用Sandbox 目录进行您不完全确定的任何实验。在处理这类事情时，你最不想要关心的是一个合适的组织。执行您想要的操作，然后在确定要将其包含在项目中时将其删除或整理。当您与其他人一起处理项目时，请创建您的个人Sandbox子目录，如： Sandbox &#x2F; JohnyC。</li>
-</ul>
-<h2 id="场景层次结构"><a href="#场景层次结构" class="headerlink" title="场景层次结构"></a>场景层次结构</h2><p>在项目的层次结构旁边还有场景层次结构。和以前一样，我会给你一个模板。您可以根据自己的需要进行调整。</p>
-<ul>
-<li>Management</li>
-<li>GUI</li>
-<li>Cameras</li>
-<li>Lights</li>
-<li>World</li>
-<li>Terrain</li>
-<li>Props</li>
-<li>_Dynamic</li>
-</ul>
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2023/05/19">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/12/29</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Unity"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Unity
-            </span>
-        </span>
-    
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="unity-project">unity-project</a>
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2021/12/hello-world/">
-                
-                <span class="abstract-title-text">你好 Hexo</span>
-            </a>
-            <div class="abstract-content">
-                <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2023/05/19">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/12/29</span>
-                </div>
-                <!-- tags -->
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
     <!-- paginator  -->
     
 </main>
 
                 <!-- profile -->
-                
-                    <div class="profile">
-    <img class="profile-avatar" alt="avatar" src= /avatar/nil.jpg />
-    <div class="profile-name">Nil</div>
-    
-        <div class="profile-signature">
-            闲言碎语唠叨人.
-        </div>
-    
-    
-        <div class="profile-social">
-            
-    
-        
-            
-                <a href="mailto:huozk0804@gmail.com" class="iconfont-archer email" title=email ></a>
-            
-        
-    
-        
-            
-                <a href="//github.com/huozk0804" class="iconfont-archer github" target="_blank" title=github></a>
-            
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-            
-                <a href="//www.zhihu.com/people/fanxingyunchen" class="iconfont-archer zhihu" target="_blank" title=zhihu></a>
-            
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-            
-                <a href="//space.bilibili.com/279014900" class="iconfont-archer bilibili" target="_blank" title=bilibili></a>
-            
-        
-    
-        
-    
-        
-            
-                <a href="//steamcommunity.com/id/huozk/" class="iconfont-archer steam" target="_blank" title=steam></a>
-            
-        
-    
-        
-    
-        
-            
-                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title=rss></a>
-            
-        
-    
-
-
-        </div>
-    
-    
-        <div class="friends">
-            <div>
-                
-                    <i class="fas fa-heart profile-item-icon"></i>
-                
-                FRIENDS
-            </div>
-            
-                
-                    <span>
-                        <a href="//www.luzexi.com/" target="_blank">技术人生</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href="//catlikecoding.com/" target="_blank">Catlinke Coding</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href="//blog.uwa4d.com/" target="_blank">UWA Blog</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href="//necromanov.wordpress.com/" target="_blank">旗舰评论</a>
-                    </span>
-                
-            
-        </div>
-    
-    
-        <div class="profile-link-item">
-            <a href="/about" class="about-me">
-                
-                    <i class="fas fa-id-card profile-item-icon"></i>
-                
-                ABOUT ME
-            </a>
-        </div>
-    
-    
-    
-</div>
-
                 
             </div>
             <footer class="footer footer-unloaded">
