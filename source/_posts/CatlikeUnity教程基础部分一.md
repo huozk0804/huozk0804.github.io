@@ -1,5 +1,5 @@
 ---
-title: "[译介]Unity基础教程：(一)创建一个时钟"
+title: "[译]Unity基础教程：(一)创建一个时钟"
 date: 2022-03-02 09:46:42
 link: catlike-base-building-a-clock
 tags: unity-base
