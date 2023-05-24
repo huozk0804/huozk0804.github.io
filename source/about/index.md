@@ -14,9 +14,11 @@ I am Huo Zhaokun, a game development engineer. I like creative games. Obsessed w
 
 ### Contact me
 
-* Github: [huozk0804](https://github.com/huozk0804)
-* 知乎：[Nil](https://www.zhihu.com/people/fanxingyunchen)
+* Github: [Nil](https://github.com/huozk0804)
+* 知乎：[MaxNil](https://www.zhihu.com/people/fanxingyunchen)
+* 哔哩哔哩：[MaxxNil](https://space.bilibili.com/279014900)
 * Wechat：[一剑光寒耀九州](/images/202305/wechat.webp)
+* Twitter：[Nil](https://twitter.com/huozk_nil)
 * Email: [huozk0804@gmail.com](mailto:huozk0804@gmail.com)
 
 ---

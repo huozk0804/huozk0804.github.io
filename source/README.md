@@ -1,1 +1,1 @@
-This is my blog, please visit this address to browse. -> [huozk.cn](huozk.cn)
+This is my blog, please visit this address to browse. -> [huozk.cn](https://huozk.cn)
