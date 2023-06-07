@@ -1,6 +1,6 @@
 ---
 title: Unity项目架构设计与开发管理
-date: 2022-1-19 09:53:35
+date: 2022-1-15 09:53:35
 link: unity-manager-intro
 tags: unity-framework
 categories: Unity
@@ -37,7 +37,7 @@ GameManager.Instance.playSound("menu");
 
 ## MVCS（StrangeIOC）
 
-![Unity3D-StrongeIOC框架结构图](/images/202305/strangeioc-framework.webp)  
+![Unity3D-StrongeIOC框架结构图](/images/202201/strangeioc-framework.webp)  
 
 Strange是一个超轻量级且高度可扩展的控制反转控制（IoC）框架，专为C＃和Unity编写。 它包含以下功能，其中大部分是可选的：
 
@@ -53,7 +53,7 @@ Strange是一个超轻量级且高度可扩展的控制反转控制（IoC）框�
 
 ## MVVM（uFrame）
 
-![Unity3D-uFrame框架结构](/images/202305/uframe.webp)  
+![Unity3D-uFrame框架结构](/images/202201/uframe.webp)  
 
 uFrame 是为 Unity Engine 设计的 MVVM / MV * 框架。它配备了大量功能，包括图形界面 / 图表引擎，可生成代码甚至处理一些重新分解。图形界面显著提高所有团队成员开发和实施一致编码模型的效率。随着微软全息镜头的崛起和Unity的跨平台功能，uFrame 是构建下一个大型应用程序或游戏的终极解决方案。 包含以下功能：
 
@@ -71,7 +71,7 @@ uFrame 是为 Unity Engine 设计的 MVVM / MV * 框架。它配备了大量功�
 
 在2018年，Unity又重点推荐ECS；ECS是一种编写代码的方式，专注于您正在解决的实际问题：组成游戏的数据和行为。其中心为Entity，Component，System。除了出于设计原因更好地接近游戏编程之外，使用ECS可以使您更好的利用Unity的C＃job系统和Burst Compiler，充分利用当今的多核处理器。
 这里非常推荐比较成熟的一个三方方案 [Entitas](https://github.com/strangeioc/strangeioc),很好的解决了代码生成的问题。
-![entitas 结构图](/images/202305/entitas-framework.webp)
+![entitas 结构图](/images/202201/entitas-framework.webp)
 
 * Entity 是实例,作为承载组件的载体,也是框架中维护对象的实体.
 * Component 只包含数据,具备这个组件便具有这个功能.
