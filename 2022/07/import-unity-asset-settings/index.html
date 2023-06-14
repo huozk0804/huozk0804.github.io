@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- title -->
+
+
+    
+
+<!-- keywords -->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="Nil">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Nil">
+    
+        <meta name="keywords" content="game,unity,unreal,lua,c#">
+    
+    <meta name="description" content="">
+    <meta name="description" content="实际项目中发现的许多问题都是源自无心之过：临时的“测试”更改和疲惫不堪的开发人员的误点击可能会暗地里添加性能不良的资源或更改现有资源的导入设置。 对于任何大规模的项目，最好是将防止人为错误作为第一道防线。编写一小段代码来禁止将 4K 未压缩纹理添加到项目中，是相对简单的事情。 但是，这种错误操作却是十分常见的。一个 4K 的未压缩纹理会占用 60 MB 的内存。在低端移动设备（如 iPhone 4">
+<meta property="og:type" content="article">
+<meta property="og:title" content="外部资源文件导入Unity的一些优化设置">
+<meta property="og:url" content="http://huozk.cn/2022/07/import-unity-asset-settings/index.html">
+<meta property="og:site_name" content="一剑光寒耀九州">
+<meta property="og:description" content="实际项目中发现的许多问题都是源自无心之过：临时的“测试”更改和疲惫不堪的开发人员的误点击可能会暗地里添加性能不良的资源或更改现有资源的导入设置。 对于任何大规模的项目，最好是将防止人为错误作为第一道防线。编写一小段代码来禁止将 4K 未压缩纹理添加到项目中，是相对简单的事情。 但是，这种错误操作却是十分常见的。一个 4K 的未压缩纹理会占用 60 MB 的内存。在低端移动设备（如 iPhone 4">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://huozk.cn/images/202207/import-unity-asset-settings-1.webp">
+<meta property="og:image" content="http://huozk.cn/images/202207/import-unity-asset-settings-2.webp">
+<meta property="article:published_time" content="2022-07-15T01:14:26.000Z">
+<meta property="article:modified_time" content="2023-06-14T01:18:30.857Z">
+<meta property="article:author" content="Nil">
+<meta property="article:tag" content="unity-asset">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://huozk.cn/images/202207/import-unity-asset-settings-1.webp">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="icon" href="/assets/favicon.ico">
+    
+    <title>外部资源文件导入Unity的一些优化设置 · 一剑光寒耀九州</title>
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+    (function (w) {
+        'use strict'
+        // rel=preload support test
+        if (!w.loadCSS) {
+            w.loadCSS = function () {}
+        }
+        // define on the loadCSS obj
+        var rp = (loadCSS.relpreload = {})
+        // rel=preload feature support test
+        // runs once and returns a function for compat purposes
+        rp.support = (function () {
+            var ret
+            try {
+                ret = w.document.createElement('link').relList.supports('preload')
+            } catch (e) {
+                ret = false
+            }
+            return function () {
+                return ret
+            }
+        })()
+
+        // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+        // then change that media back to its intended value on load
+        rp.bindMediaToggle = function (link) {
+            // remember existing media attr for ultimate state, or default to 'all'
+            var finalMedia = link.media || 'all'
+
+            function enableStylesheet() {
+                link.media = finalMedia
+            }
+
+            // bind load handlers to enable media
+            if (link.addEventListener) {
+                link.addEventListener('load', enableStylesheet)
+            } else if (link.attachEvent) {
+                link.attachEvent('onload', enableStylesheet)
+            }
+
+            // Set rel and non-applicable media type to start an async request
+            // note: timeout allows this to happen async to let rendering continue in IE
+            setTimeout(function () {
+                link.rel = 'stylesheet'
+                link.media = 'only x'
+            })
+            // also enable media after 3 seconds,
+            // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+            setTimeout(enableStylesheet, 3000)
+        }
+
+        // loop through link elements in DOM
+        rp.poly = function () {
+            // double check this to prevent external calls from running
+            if (rp.support()) {
+                return
+            }
+            var links = w.document.getElementsByTagName('link')
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i]
+                // qualify links to those with rel=preload and as=style attrs
+                if (
+                    link.rel === 'preload' &&
+                    link.getAttribute('as') === 'style' &&
+                    !link.getAttribute('data-loadcss')
+                ) {
+                    // prevent rerunning on link
+                    link.setAttribute('data-loadcss', true)
+                    // bind listeners to toggle media back
+                    rp.bindMediaToggle(link)
+                }
+            }
+        }
+
+        // if unsupported, run the polyfill
+        if (!rp.support()) {
+            // run once at least
+            rp.poly()
+
+            // rerun poly on an interval until onload
+            var run = w.setInterval(rp.poly, 500)
+            if (w.addEventListener) {
+                w.addEventListener('load', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            } else if (w.attachEvent) {
+                w.attachEvent('onload', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            }
+        }
+
+        // commonjs
+        if (typeof exports !== 'undefined') {
+            exports.loadCSS = loadCSS
+        } else {
+            w.loadCSS = loadCSS
+        }
+    })(typeof global !== 'undefined' ? global : this)
+</script>
+
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20211229" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/css/dark.css?v=20211229" as="style">
+    <link rel="stylesheet" href="/css/dark.css">
+    <link rel="stylesheet" href="/css/mobile.css?v=20211229" media="(max-width: 960px)">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js?v=20211229" as="script">
+    <link rel="preload" href="/scripts/dark.js?v=20211229" as="script">
+    <link rel="preload" href="/font/Oswald-Regular.ttf" as="font" crossorigin>
+    <link rel="preload" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" as="font" crossorigin>
+    <!-- algolia -->
+    
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="一剑光寒耀九州" type="application/atom+xml">
+</head>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ == undefined) {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js" />')
+        }
+    </script>
+    
+        <body class="post-body">
+    
+        <!-- header -->
+        <header class="header header-mobile">
+    <!-- top read progress line -->
+    <div class="header-element">
+        <div class="read-progress"></div>
+    </div>
+    <!-- sidebar menu button -->
+    <div class="header-element">
+        
+            <div class="header-sidebar-menu">
+        
+            
+                <div style="padding-left: 1px;">&#xe775;</div>
+            
+        </div>
+    </div>
+    <!-- header actions -->
+    <div class="header-actions">
+        <!-- theme mode switch button -->
+        <span class="header-theme-btn header-element">
+            <i class="fas fa-adjust"></i>
+        </span>
+        <!-- back to home page text -->
+        <span class="home-link header-element">
+            <a href=/>一剑光寒耀九州</a>
+        </span>
+    </div>
+    <!-- toggle banner for post layout -->
+    
+        
+            <div class="banner">
+        
+            <div class="blog-title header-element">
+                <a href="/">一剑光寒耀九州</a>
+            </div>
+            <div class="post-title header-element">
+                <a href="#" class="post-name">外部资源文件导入Unity的一些优化设置</a>
+            </div>
+        </div>
+    
+</header>
+
+        <!-- fixed footer -->
+        <footer class="footer-fixed">
+    <!-- back to top button -->
+    <div class="footer-fixed-element">
+        
+            <div class="back-top back-top-hidden">
+        
+        
+            <div>&#xe639;</div>
+        
+        </div>
+    </div>
+</footer>
+
+        <!-- wrapper -->
+        <div class="wrapper">
+            <div class="site-intro" style="
+
+
+
+
+
+
+
+    height:50vh;
+
+">
+    
+    <!-- 主页  -->
+    
+        
+    <!-- 404页  -->
+    
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+                外部资源文件导入Unity的一些优化设置
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+                
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页 meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="Unity"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                Unity
+            </span>
+        </span>
+    
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="unity-asset">unity-asset</a>
+    
+</div>
+
+                
+                <!-- 文章字数统计 -->
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count word-count">4.7k</span>Reading time: <span class="post-count reading-time">16 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <!-- 撰写日期 -->
+                    <span class="iconfont-archer post-intro-calander">&#xe676;</span>
+                    <span class="post-intro-time">2022/07/15</span>
+                    <!-- busuanzi -->
+                    
+                        <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                            <span class="iconfont-archer post-intro-busuanzi">&#xe602;</span>
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    
+                    <!-- 文章分享 -->
+                    <span class="share-wrapper">
+                        <span class="iconfont-archer share-icon">&#xe71d;</span>
+                        <span class="share-text">Share</span>
+                        <ul class="share-list">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+
+            <script>
+  // get user agent
+  function getBrowserVersions() {
+    var u = window.navigator.userAgent
+    return {
+      userAgent: u,
+      trident: u.indexOf('Trident') > -1, //IE内核
+      presto: u.indexOf('Presto') > -1, //opera内核
+      webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+      gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+      mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+      ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+      android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+      iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+      iPad: u.indexOf('iPad') > -1, //是否为iPad
+      webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+      weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+      uc: u.indexOf('UCBrowser') > -1, //是否为android下的UC浏览器
+    }
+  }
+  var browser = {
+    versions: getBrowserVersions(),
+  }
+  console.log('userAgent: ' + browser.versions.userAgent)
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded')
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document
+        .getElementsByClassName('intro-title')[0]
+        .classList.add('intro-fade-in')
+      document
+        .getElementsByClassName('intro-subtitle')[0]
+        .classList.add('intro-fade-in')
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in')
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb() {
+    if (browser.versions.uc) {
+      console.log('UCBrowser')
+      fontLoaded()
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular'],
+        },
+        loading: function () {
+          // 所有字体开始加载
+          // console.log('font loading');
+        },
+        active: function () {
+          // 所有字体已渲染
+          fontLoaded()
+        },
+        inactive: function () {
+          // 字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout')
+          fontLoaded()
+        },
+        timeout: 5000, // Set the timeout to two seconds
+      })
+    }
+  }
+
+  function asyncErr() {
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document,
+      t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0]
+    o.src = u
+    if (cb) {
+      o.addEventListener(
+        'load',
+        function (e) {
+          cb(null, e)
+        },
+        false
+      )
+    }
+    if (err) {
+      o.addEventListener(
+        'error',
+        function (e) {
+          err(null, e)
+        },
+        false
+      )
+    }
+    s.parentNode.insertBefore(o, s)
+  }
+
+  var asyncLoadWithFallBack = function (arr, success, reject) {
+    var currReject = function () {
+      reject()
+      arr.shift()
+      if (arr.length) async(arr[0], success, currReject)
+    }
+
+    async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack(
+    [
+      'https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js',
+      'https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js',
+      "/lib/webfontloader.min.js",
+    ],
+    asyncCb,
+    asyncErr
+  )
+</script>
+
+            <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+            <div class="container container-unloaded">
+                <main class="main post-page">
+    <article class="article-entry">
+        <p>实际项目中发现的许多问题都是源自无心之过：临时的“测试”更改和疲惫不堪的开发人员的误点击可能会暗地里添加性能不良的资源或更改现有资源的导入设置。</p>
+<p>对于任何大规模的项目，最好是将防止人为错误作为第一道防线。编写一小段代码来禁止将 4K 未压缩纹理添加到项目中，是相对简单的事情。</p>
+<p>但是，这种错误操作却是十分常见的。一个 4K 的未压缩纹理会占用 60 MB 的内存。在低端移动设备（如 iPhone 4S）上，占用的内存超过大约 180–200 MB 是十分危险的。如果误添加此类纹理，就会无意中占用应用程序内存预算的三分之一到四分之一，并导致难以诊断的内存不足错误。</p>
+<h2 id="一、Model-模型"><a href="#一、Model-模型" class="headerlink" title="一、Model(模型)"></a>一、Model(模型)</h2><h3 id="1-1-禁用Read-x2F-Write-enabled"><a href="#1-1-禁用Read-x2F-Write-enabled" class="headerlink" title="1.1 禁用Read&#x2F;Write enabled"></a>1.1 <strong>禁用Read&#x2F;Write enabled</strong></h3><p>模型的”<em>Read&#x2F;Write enabled“</em> 设置与纹理的具有相同的工作原理。但是，模型在默认情况下会启用该标志。</p>
+<p>如果项目在运行时通过脚本修改网格 (Mesh)，或者如果网格用作 MeshCollider 组件的基础，则 Unity 会要求启用此标志。如果模型未在 MeshCollider 中使用并且未被脚本操纵，请禁用此标志以节省一半模型内存。</p>
+<p>上文更具体的说法是在某些情况下禁用该选项也会导致“<em>MeshCollider</em>”不起作用：</p>
+<ul>
+<li>Mesh Collider的变换组件具有负缩放参数(如(-1,1,1))，且网格为凸面。</li>
+<li>Mesh Collider的变换组件是倾斜或截断的(例如，当旋转的变换组件具有缩放的父变换组件时)。</li>
+<li>Mesh Collider的“<em>Cooking Options</em>”选项设置为除默认值以外的任意值时。</li>
+</ul>
+<h3 id="1-2-在非角色模型上禁用骨架"><a href="#1-2-在非角色模型上禁用骨架" class="headerlink" title="1.2 在非角色模型上禁用骨架"></a>1.2 <strong>在非角色模型上禁用骨架</strong></h3><p>默认情况下，Unity会为非角色模型导入通用骨架。如果模型在运行时实例化，则会被添加<code>Animator</code>组件。如果模型没有通过动画系统进行动画处理，则会给动画系统增加不必要的开销，因为每帧都必须运行一次所有激活的Animator。</p>
+<p>在非动画模型上禁用骨架可以避免自动添加Animator组件，并防止向场景添加不需要的Animator。</p>
+<h3 id="1-3-在动画模型上启用Optimize-Game-Objects"><a href="#1-3-在动画模型上启用Optimize-Game-Objects" class="headerlink" title="1.3 在动画模型上启用Optimize Game Objects"></a>1.3 <strong>在动画模型上启用Optimize Game Objects</strong></h3><p>“<em>Optimize Game Objects“</em>选项对动画模型有着显著的性能影响。禁用该选项后，Unity会在每次实例化模型时创建一个大型变换层级视图来镜像模型的骨骼结构。此变换层级视图的更新成本很高，尤其是在附加了其他组件（如粒子系统或碰撞体）的情况下。它还限制了Unity通过多线程执行网格蒙皮和骨骼动画计算的能力。</p>
+<p>如果需要暴露模型骨骼结构上的特定位置（例如暴露模型的双手以便动态附加武器模型），则可在<br>“<em>Extra Transforms</em>”列表中将这些位置专门设为允许状态。</p>
+<p>如需了解更多详细信息，请参阅 Unity 手册的 <a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/FBXImporter-Rig.html">Model Importer</a> 页面。</p>
+<h3 id="1-4-尽可能使用网格压缩-Mesh-Compression"><a href="#1-4-尽可能使用网格压缩-Mesh-Compression" class="headerlink" title="1.4 尽可能使用网格压缩(Mesh Compression)"></a>1.4 <strong>尽可能使用网格压缩(Mesh Compression)</strong></h3><p>通过使用网格边界和每个组件较低的位深度来压缩网格数据，增加压缩率会降低网格的精度。最好在 <code>Mesh</code> 看起来与未压缩版本没有太大区别的情况下将其调得尽可能高。这对于优化游戏大小很有用</p>
+<p><img src="/images/202207/import-unity-asset-settings-1.webp" alt="Untitled"></p>
+<p><em>请注意，可对不同的通道使用不同级别的压缩，因此项目可选择仅压缩切线和法线，同时保持UV和顶点位置不压缩。</em></p>
+<h3 id="1-5-注意网格渲染器设置"><a href="#1-5-注意网格渲染器设置" class="headerlink" title="1.5 注意网格渲染器设置"></a>1.5 <strong>注意网格渲染器设置</strong></h3><p>将网格渲染器添加到预制件或游戏对象时，请注意组件上的设置。默认情况下，Unity会启用阴影投射和接收、光照探针采样、反射探针采样和运动矢量计算。</p>
+<p>如果项目不需要这些功能，需要通过自动脚本关闭。添加网格渲染器的任何运行时代码也都需要处理这些设置。</p>
+<p>对于2D游戏，在启用阴影选项的情况下意外地将网格渲染器添加到场景会为渲染循环添加完整的阴影pass。通常情况下，这是对性能的浪费。</p>
+<h3 id="1-6-LOD"><a href="#1-6-LOD" class="headerlink" title="1.6 LOD"></a>1.6 LOD</h3><p>LOD即Levels of Detail，翻译过来就是多层次细节，类似与纹理渲染的Mip map技术，同样是一种根据渲染距离设置渲染精度的一种技术。其实现方式是在游戏开发时，美术根据不同的渲染距离制作一组不同精度的模型，导入到Unity通过LOD组件连接其这一组模型，并设置相关参数。这样在游戏运行时，就会在不同的距离有不同的渲染精度。</p>
+<p>使用LOD后，模型随着渲染距离的增加，渲染精度逐渐下降，直到最终被剔除，这样做的优势是保证游戏画面表现的同时，可以最大程度降低渲染压力。简单的理解，如果不采用LOD，随着距离增加，物体占用的屏幕像素就会越少，那么单位像素的三角面数就会越多。单位的渲染压力就会增大。画面表现需求不高的地方渲染压力反而更高，这显然是不合理的。所以就需要通过LOD来解决这样的问题。</p>
+<p>当然这种技术本身也是有相当大的缺陷的，首先就是会增大包体的体积，同时也会增加美术的工作量。所以在实际开放中，一般只会对一些重要的对象使用该技术。</p>
+<h3 id="1-7-模型导入前的优化"><a href="#1-7-模型导入前的优化" class="headerlink" title="1.7 模型导入前的优化"></a>1.7 模型导入前的优化</h3><p>DCC 中模型导出时，Unity 支持多种标准和专有模型文件格式（DCC）。Unity 内部使用 <code>.fbx</code> 文件格式作为其导入链。最佳做法尽可能使用 <code>.fbx</code> 文件格式，并且不应在生产中使用专有文件格式。</p>
+<p>优化原始导入模型文件，删除不需要的数据</p>
+<ul>
+<li>统一单位，避免DCC工具中的单位和Unity中的单位出现不一致的情况</li>
+<li>导出的网格必须是多边形拓扑网格，不能是贝塞尔曲线、样条曲线、NURBS、NURMS、细分曲面等</li>
+<li>烘培”<em>Deformers“</em>, 在导出之前，确保变形体被烘培到网格模型上，如骨骼形变烘培到蒙皮权重上</li>
+<li>不建议模型使用到的纹理随模型导出，纹理应该单独给出</li>
+<li>如果需要导入”<em>blend shape normals“</em>，必须要指定光滑组”<em>smooth groups“</em>，当然也不是全部都需要指定</li>
+<li>DCC导出面板设置，不建议携带场景信息导出，如不建议导出摄像机、灯光、材质等信息，因为这些的信息与 Unity内默认都不同。除非你自己为某DCC做过自定义导出插件。</li>
+</ul>
+<h3 id="1-8-原始模型对性能影响的点"><a href="#1-8-原始模型对性能影响的点" class="headerlink" title="1.8 原始模型对性能影响的点"></a>1.8 原始模型对性能影响的点</h3><ul>
+<li>最小化面数，不要使用微三角形（三角形内只有个位数像素即微三角形），分布尽量均匀，尽量使用 LOD</li>
+<li>合理的网络拓扑和平滑组，尽可能是闭包，避免后期 Unity 烘焙错误，避免产生额外的三角形顶点和边</li>
+<li>尽量少的使用材质个数，材质数量的增多会引起 Shader 和贴图的暴涨</li>
+<li>尽可能少的使用蒙皮网格，同一个模型尽量尽量使用同一个蒙皮网格</li>
+<li>尽可能少的骨骼数量，过多骨骼数量会引起蒙皮动画的 CPU、GPU 双方的性能瓶颈</li>
+<li>原始模型中的 FK 与 IK 节点分离，Unity 中不支持导入的 IK 骨骼，导出时需要删除 IK 节点</li>
+</ul>
+<h3 id="1-9-其他需要注意点"><a href="#1-9-其他需要注意点" class="headerlink" title="1.9 其他需要注意点"></a>1.9 其他需要注意点</h3><ul>
+<li>尽可能的将网格合并到一起</li>
+<li>尽可能使用共享材质，单个模型尽量使用单个材质</li>
+<li>不要使用网格碰撞体</li>
+<li>不必要不要开启网格读写，否则会存在内存和显存中两份模型资源</li>
+<li>使用合理的LOD级别，可以参考<a target="_blank" rel="noopener" href="https://docs.unity3d.com/cn/2020.3/Manual/LevelOfDetail.html">https://docs.unity3d.com/cn/2020.3/Manual/LevelOfDetail.html</a></li>
+<li><em>Skin Weights</em>受骨骼影响个过多</li>
+<li>合理压缩网格，减化网格，避免出现全部是精细模型，比如一个石头就有上万的顶点数量肯定是不合理的</li>
+<li>不需要<em>rigs</em>和<em>BlendShapes</em>尽量关闭</li>
+<li>如果可能，禁用法线或切线</li>
+<li>多套模型</li>
+</ul>
+<h2 id="二、Texture-纹理"><a href="#二、Texture-纹理" class="headerlink" title="二、Texture(纹理)"></a>二、Texture(纹理)</h2><h3 id="2-1-禁用read-x2F-write-enabled标志"><a href="#2-1-禁用read-x2F-write-enabled标志" class="headerlink" title="2.1 禁用read&#x2F;write enabled标志"></a>2.1 <strong>禁用read&#x2F;write enabled标志</strong></h3><p><code>Read/Write enabled</code> 标志使纹理在内存中保留两次：一次保存在GPU中，一次保存在CPU可寻址内存中（注意： 这是因为大多数平台上从 GPU 内存回读的速度极慢。将纹理从GPU内存读入临时缓冲区以供CPU代码（例如 Texture.GetPixel）使用将是非常低效的）。</p>
+<p>在 Unity 中，默认情况下禁用此设置，但可能会无意中将其打开。</p>
+<p>只有在着色器之外操作纹理数据时（例如使用 <code>Texture.GetPixel</code> 和 <code>Texture.SetPixel</code> API 时）才需要 <code>Read/Write Enabled</code>，否则应尽可能避免使用它。</p>
+<h3 id="2-2-尽可能禁用Mipmap"><a href="#2-2-尽可能禁用Mipmap" class="headerlink" title="2.2 尽可能禁用Mipmap"></a>2.2 <strong>尽可能禁用Mipmap</strong></h3><p>如果对象相对于摄像机具有固定的深度距离，则可禁用Mipmap，这样将大约节省加载纹理所需内存的三分之一。如果对象的深度距离不固定，则禁用Mipmap可能导致GPU上的纹理采样性能变差。</p>
+<p>通常情况下UI和2D贴图不会改变渲染精度，会禁用此选项。</p>
+<p>Mip Map类似于模型的LOD，同样是一种基于渲染距离改变渲染贴图精度的技术。其优势是在物体距离渲染距离比较远时，可以节省性能。但是使用Mip Map时会增大内存占用量。</p>
+<p>Mip map的技术原理是根据原始图进行2的幂次方的递减来生成一组不同精度的图片。当游戏运行时，会将这组图片加载到内存中，然后根据渲染的距离不同，来使用不同精度的图片。</p>
+<p>Mip map会增大多大的内存占用量呢？在我们使用Mip map时，假设大小为256X256，并且会生成8张不同精度的图片。根据2的幂次方进行递减计算每张贴图大小并累加。这样最终得到的图片组的体积大概比原来的单张贴图大33%</p>
+<h3 id="2-3-压缩所有纹理"><a href="#2-3-压缩所有纹理" class="headerlink" title="2.3 压缩所有纹理"></a>2.3 <strong>压缩所有纹理</strong></h3><p>Unity基于多适配性，没有一股脑的把不同的文件压缩成一个格式，而是把设置开放出来，可以让开发者基于项目、基于平台进行更细粒度的控制。</p>
+<p>即使在同一平台，也会根据不同的情况有着不同的压缩需求，比如有一些关键的主页面图片，玩家感知强的地方，就对图片的质量要求高些，一些边角的辅助图片，可能要求就低一些，如果都使用高质量压缩，性能方面就造成了浪费，但若都是用低质量压缩，质量又跟不上。所以，同样需要根据实际需求选择不同的压缩格式。</p>
+<p>有张经典的图片介绍不同压缩格式的特点与适用场景：</p>
+<p><img src="/images/202207/import-unity-asset-settings-2.webp" alt="Snipaste_2023-06-08_16-44-00.jpg"></p>
+<p>使用适合项目目标平台的纹理压缩格式对于节省内存至关重要。</p>
+<p>如果所选的纹理压缩格式不适合目标平台，Unity 会在加载纹理时解压缩纹理，这将消耗 CPU 时间和额外的内存。此问题在 Android 设备上最常见，因为此类平台通常因芯片组不同而支持截然不同的纹理压缩格式。RGB32和RGB24等非压缩格式纹理占用内存较大。</p>
+<ol>
+<li>Android平台：<ul>
+<li>ETC2：适用于大部分Android设备的压缩格式，具有较高的质量和压缩比。可以在导入设置中选择ASTC格式，根据设备支持程度进行调整。</li>
+<li>ETC1：适用于性能较低的设备，压缩比较高但质量稍低。在低端设备上，可以考虑使用ETC1格式。</li>
+</ul>
+</li>
+<li>iOS平台：<ul>
+<li>ASTC：适用于支持ASTC纹理压缩的iOS设备，提供高质量和高压缩比。可以使用ASTC格式来获得较好的视觉效果和性能。</li>
+<li>PVRTC：适用于老旧的iOS设备，提供较高的压缩比但质量相对较低。在旧款设备上，可以使用PVRTC格式来进行纹理压缩。</li>
+</ul>
+</li>
+<li>PC和主机平台：<ul>
+<li>BC系列：适用于PC和主机平台，如DXTC（DXT1、DXT5）、BC1、BC3等。具有较高的压缩比和较好的视觉质量，适用于大部分PC和主机设备。</li>
+</ul>
+</li>
+</ol>
+<h3 id="2-4-实施合理的纹理大小限制"><a href="#2-4-实施合理的纹理大小限制" class="headerlink" title="2.4 实施合理的纹理大小限制"></a>2.4 <strong>实施合理的纹理大小限制</strong></h3><p>虽然很简单，但也很容易忘记调整纹理大小或无意中更改纹理大小导入设置。应确定不同类型纹理的合理最大值，并通过代码强制执行这些限制规则。</p>
+<p>对于许多移动应用程序，2048x2048 或 1024x1024 足以满足纹理图集的要求，而 512x512 足以满足应用于 3D 模型的纹理的要求。</p>
+<h3 id="2-5-打包图集"><a href="#2-5-打包图集" class="headerlink" title="2.5 打包图集"></a>2.5 打包图集</h3><p>图集的打包主要是优化UI图形渲染过程中Draw call的数量，其基本原理也是通过UI元素合批来减少Draw Call，进入提升CPU的性能表现，关于其具体细节，将会另开一个坑说明。</p>
+<h2 id="三、Audios-音频"><a href="#三、Audios-音频" class="headerlink" title="三、Audios(音频)"></a>三、Audios(音频)</h2><h3 id="3-1-音频格式选择"><a href="#3-1-音频格式选择" class="headerlink" title="3.1 音频格式选择"></a>3.1 音频格式选择</h3><p>几种常见的音频压缩格式对比以及它们适用的平台：</p>
+<ol>
+<li><strong>MP3（MPEG-1 Audio Layer 3）</strong>：MP3 是一种广泛使用的有损音频压缩格式，具有较好的压缩比和广泛的平台支持。MP3 格式适用于多个平台，包括 PC、主机游戏、移动设备和网络游戏等。</li>
+<li><strong>AAC（Advanced Audio Coding）</strong>：AAC 是一种高级音频编码格式，与 MP3 相比，它通常具有更好的音频质量和更小的文件大小。AAC 格式广泛用于移动设备和流媒体平台，如 iOS、Android、Web 和流媒体服务。</li>
+<li><strong>OGG Vorbis</strong>：OGG Vorbis 是一种开源的无损音频压缩格式，具有较好的音频质量和相对较小的文件大小。OGG Vorbis 格式适用于多个平台，包括 PC、主机游戏、移动设备和网络游戏等。</li>
+<li><strong>FLAC（Free Lossless Audio Codec）</strong>：FLAC 是一种无损音频压缩格式，能够保持音频的原始质量，但文件大小相对较大。FLAC 格式主要适用于对音频质量要求较高的平台，如高保真音频播放器和音乐制作工具。</li>
+<li><strong>WAV（Waveform Audio File Format）</strong>：WAV 是一种无损音频格式，不进行压缩。它适用于游戏开发过程中的中间文件、音频编辑和处理等环节，不适合作为最终游戏发布的音频格式，因为文件大小较大。</li>
+</ol>
+<h3 id="3-2-适合平台的压缩设置"><a href="#3-2-适合平台的压缩设置" class="headerlink" title="3.2 适合平台的压缩设置"></a>3.2 <strong>适合平台的压缩设置</strong></h3><p>为音频设置与平台匹配的压缩格式。如iOS设备都包含硬件MP3解压器，而许多Android设备则本身就支持Vorbis。</p>
+<p>移动平台大多数声音尽量采用 Vorbis 压缩设置，IOS平台或不打算循环的声音可以选择MP3格式，对于简短、常用的音效，可以采用解码速度快的ADPCM格式（PCM为未压缩格式）</p>
+<p><em>注：对<a target="_blank" rel="noopener" href="http://www.shaoguoji.cn/2019/08/05/hardcore-audio-1/">PCM格式的解读</a>(扩展知识)。</em></p>
+<p>此外，应将未压缩的音频文件导入Unity。Unity 在构建项目时会重新压缩音频，无需把导入压缩的音频再重新压缩，这样只会降低最终音频剪辑的质量。</p>
+<h3 id="3-3-设置声道"><a href="#3-3-设置声道" class="headerlink" title="3.3 设置声道"></a>3.3 <strong>设置声道</strong></h3><p>移动设备实际上很少配备有立体声扬声器。在移动平台项目中，将导入的音频剪辑强制设置为单声道(”<em>Force to Mono</em>”)，可以使其内存消耗减半。此设置也适用于没有立体声效果的任何音频剪辑，例如大多数UI声音效果。</p>
+<h3 id="3-4-设置音频加载类型"><a href="#3-4-设置音频加载类型" class="headerlink" title="3.4 设置音频加载类型"></a>3.4 设置音频加载类型</h3><ul>
+<li>简短音效导入后小于 200kb，采用 “<em>Decompress on Load“</em> 模式</li>
+<li>对于复杂音效，大小大于 200kb，长度超过 5 秒的音效采用 ”<em>Compressed In Memory“</em> 模式</li>
+<li>对于长度较长的音效或背景音乐则采用 ”<em>Streaming“</em> 模式，虽然会有CPU额外开销，但节省内存并且加载不卡顿</li>
+</ul>
+<h3 id="3-5-降低音频比特率"><a href="#3-5-降低音频比特率" class="headerlink" title="3.5 降低音频比特率"></a>3.5 <strong>降低音频比特率</strong></h3><p>降低音频的位深度和采样率可以减小文件大小。对于游戏中的音效和背景音乐，可以适当降低位深度（如从16位降至8位）和采样率（如从44.1kHz降至22.05kHz），以减小文件大小并降低解码开销。但需要注意降低位深度和采样率会损失一部分音频质量。但这种情况需要咨询音频设计师。</p>
+<h2 id="四、AssetPostprocessor"><a href="#四、AssetPostprocessor" class="headerlink" title="四、AssetPostprocessor"></a>四、<strong><strong>AssetPostprocessor</strong></strong></h2><p><a target="_blank" rel="noopener" href="https://docs.unity3d.com/cn/current/ScriptReference/AssetPostprocessor.html">AssetPostprocessor - Unity 脚本 API</a></p>
+<p>Unity Editor 中的 <code>AssetPostprocessor</code> 类可用于在 Unity 项目上强制执行某些最低标准。导入资源时将回调此类。要使用此类，应继承 <code>AssetPostprocessor</code> 并实现一个或多个 <code>OnPreprocess</code> 方法。重要的方法包括：</p>
+<ul>
+<li><code>OnPreprocessTexture</code></li>
+<li><code>OnPreprocessModel</code></li>
+<li><code>OnPreprocessAnimation</code></li>
+<li><code>OnPreprocessAudio</code></li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ReadOnlyModelPostprocessor</span> : <span class="title">AssetPostprocessor</span> &#123;</span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnPreprocessModel</span>()</span> &#123;</span><br><span class="line">        ModelImporter modelImporter = (ModelImporter)assetImporter;</span><br><span class="line">        <span class="keyword">if</span>(modelImporter.isReadable) &#123;</span><br><span class="line">            modelImporter.isReadable = <span class="literal">false</span>;</span><br><span class="line">            modelImporter.SaveAndReimport();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这是一个在项目中 <code>AssetPostprocessor</code> 强制执行规则的简单示例：</p>
+<p>每次将模型导入项目时，或者模型的导入设置发生更改时，都会调用此类。该代码只是检查 <code>Read/Write enabled</code> 标志（由 <code>isReadable</code> 属性表示）是否设置为 <code>true</code>。如果是，则强制将标志位更改为 <code>false</code>，然后保存并重新导入资源。</p>
+<p>请注意，调用 <code>SaveAndReimport</code> 会导致再次调用此代码片段！但是，因为现在已确保 <code>isReadable</code> 为 false，所以此代码不会产生无限的重新导入循环。</p>
+<h2 id="五、参考链接"><a href="#五、参考链接" class="headerlink" title="五、参考链接"></a>五、参考链接</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://blog.unity.com/cn/games/optimize-your-mobile-game-performance-expert-tips-on-graphics-and-assets">优化移动端游戏性能：图形和资源的专家级贴士 | Unity Blog</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.unity3d.com/cn/current/Manual/BestPracticeUnderstandingPerformanceInUnity4.html">资源审核 - Unity 手册 (unity3d.com)</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wwhhgg/p/12931173.html">Unity3D性能优化之资源导入标准和属性设置篇 - 学习使我进步 - 博客园 (cnblogs.com)</a></li>
+</ul>
+
+    </article>
+    <!-- license -->
+    
+        <div class="license-wrapper">
+            <p>Author：<a href="http://huozk.cn">Nil</a>
+            <p>Link：<a href="http://huozk.cn/2022/07/import-unity-asset-settings/">http://huozk.cn/2022/07/import-unity-asset-settings/</a>
+            <p>Publish date：<a href="http://huozk.cn/2022/07/import-unity-asset-settings/">July 15th 2022, 9:14:26 am</a>
+            <p>Update date：<a href="http://huozk.cn/2022/07/import-unity-asset-settings/">June 14th 2023, 9:18:30 am</a>
+            <p>License：本文采用<a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2022/06/understand-csharp-data-type-system/" title="浅析C#类型系统模块">
+                    <div class="prevTitle">浅析C#类型系统模块</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- comment -->
+    
+        <div class="post-comment">
+            <!-- 来必力 City 版安装代码 -->
+
+
+            
+
+            
+
+            
+
+            <!-- utteranc评论 -->
+
+
+            <!-- partial('_partial/comment/changyan') -->
+            <!--PC版-->
+
+
+            
+            
+
+            
+
+        </div>
+    
+    <!-- timeliness note -->
+    <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+    
+    <!-- Mathjax -->
+    
+</main>
+
+                <!-- profile -->
+                
+            </div>
+            <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+        <div class="social">
+            
+    
+        
+            
+                <a href="mailto:huozk0804@gmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/huozk0804" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//www.zhihu.com/people/fanxingyunchen" class="iconfont-archer zhihu" target="_blank" title=zhihu></a>
+            
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//twitter.com/huozk_nil" class="iconfont-archer twitter" target="_blank" title=twitter></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//space.bilibili.com/279014900" class="iconfont-archer bilibili" target="_blank" title=bilibili></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title=rss></a>
+            
+        
+    
+
+
+        </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- website approve for Chinese user -->
+    
+        <div class="website-approve">
+            
+                <span id="icp-approve" class="icp-approve">
+                    <a href="https://beian.miit.gov.cn/" target="_blank">豫ICP备2022018765号</a>
+                </span>
+            
+            
+        </div>
+    
+    <!-- 不蒜子  -->
+    
+        <div class="busuanzi-container">
+            
+             
+                <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+            
+        </div>
+    	
+</footer>
+
+        </div>
+        <!-- toc -->
+        
+            <div class="toc-wrapper toc-wrapper-loding" style=
+
+
+
+
+
+
+
+    top:50vh;
+
+>
+                <div class="toc-catalog">
+                    <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+                </div>
+                <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81Model-%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.</span> <span class="toc-text">一、Model(模型)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E7%A6%81%E7%94%A8Read-x2F-Write-enabled"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 禁用Read&#x2F;Write enabled</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%9C%A8%E9%9D%9E%E8%A7%92%E8%89%B2%E6%A8%A1%E5%9E%8B%E4%B8%8A%E7%A6%81%E7%94%A8%E9%AA%A8%E6%9E%B6"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 在非角色模型上禁用骨架</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E5%9C%A8%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9E%8B%E4%B8%8A%E5%90%AF%E7%94%A8Optimize-Game-Objects"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 在动画模型上启用Optimize Game Objects</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-%E5%B0%BD%E5%8F%AF%E8%83%BD%E4%BD%BF%E7%94%A8%E7%BD%91%E6%A0%BC%E5%8E%8B%E7%BC%A9-Mesh-Compression"><span class="toc-number">1.4.</span> <span class="toc-text">1.4 尽可能使用网格压缩(Mesh Compression)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-%E6%B3%A8%E6%84%8F%E7%BD%91%E6%A0%BC%E6%B8%B2%E6%9F%93%E5%99%A8%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.5.</span> <span class="toc-text">1.5 注意网格渲染器设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-LOD"><span class="toc-number">1.6.</span> <span class="toc-text">1.6 LOD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-7-%E6%A8%A1%E5%9E%8B%E5%AF%BC%E5%85%A5%E5%89%8D%E7%9A%84%E4%BC%98%E5%8C%96"><span class="toc-number">1.7.</span> <span class="toc-text">1.7 模型导入前的优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-8-%E5%8E%9F%E5%A7%8B%E6%A8%A1%E5%9E%8B%E5%AF%B9%E6%80%A7%E8%83%BD%E5%BD%B1%E5%93%8D%E7%9A%84%E7%82%B9"><span class="toc-number">1.8.</span> <span class="toc-text">1.8 原始模型对性能影响的点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-9-%E5%85%B6%E4%BB%96%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%82%B9"><span class="toc-number">1.9.</span> <span class="toc-text">1.9 其他需要注意点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Texture-%E7%BA%B9%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">二、Texture(纹理)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E7%A6%81%E7%94%A8read-x2F-write-enabled%E6%A0%87%E5%BF%97"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 禁用read&#x2F;write enabled标志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%B0%BD%E5%8F%AF%E8%83%BD%E7%A6%81%E7%94%A8Mipmap"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 尽可能禁用Mipmap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%8E%8B%E7%BC%A9%E6%89%80%E6%9C%89%E7%BA%B9%E7%90%86"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 压缩所有纹理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E5%AE%9E%E6%96%BD%E5%90%88%E7%90%86%E7%9A%84%E7%BA%B9%E7%90%86%E5%A4%A7%E5%B0%8F%E9%99%90%E5%88%B6"><span class="toc-number">2.4.</span> <span class="toc-text">2.4 实施合理的纹理大小限制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-%E6%89%93%E5%8C%85%E5%9B%BE%E9%9B%86"><span class="toc-number">2.5.</span> <span class="toc-text">2.5 打包图集</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81Audios-%E9%9F%B3%E9%A2%91"><span class="toc-number">3.</span> <span class="toc-text">三、Audios(音频)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E9%9F%B3%E9%A2%91%E6%A0%BC%E5%BC%8F%E9%80%89%E6%8B%A9"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 音频格式选择</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E9%80%82%E5%90%88%E5%B9%B3%E5%8F%B0%E7%9A%84%E5%8E%8B%E7%BC%A9%E8%AE%BE%E7%BD%AE"><span class="toc-number">3.2.</span> <span class="toc-text">3.2 适合平台的压缩设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E8%AE%BE%E7%BD%AE%E5%A3%B0%E9%81%93"><span class="toc-number">3.3.</span> <span class="toc-text">3.3 设置声道</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E8%AE%BE%E7%BD%AE%E9%9F%B3%E9%A2%91%E5%8A%A0%E8%BD%BD%E7%B1%BB%E5%9E%8B"><span class="toc-number">3.4.</span> <span class="toc-text">3.4 设置音频加载类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E9%99%8D%E4%BD%8E%E9%9F%B3%E9%A2%91%E6%AF%94%E7%89%B9%E7%8E%87"><span class="toc-number">3.5.</span> <span class="toc-text">3.5 降低音频比特率</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81AssetPostprocessor"><span class="toc-number">4.</span> <span class="toc-text">四、AssetPostprocessor</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-number">5.</span> <span class="toc-text">五、参考链接</span></a></li></ol>
+            </div>
+        
+        <!-- sidebar -->
+        <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+        <div class="sidebar-panel-archives">
+    <!-- 在 ejs 中将 archive 按照时间排序 -->
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 9
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+        
+            
+            
+            <div class="archive-year"> 2022 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/15</span>
+            <a class="archive-post-title" href="/2022/07/import-unity-asset-settings/">外部资源文件导入Unity的一些优化设置</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/30</span>
+            <a class="archive-post-title" href="/2022/06/csharp-deep-and-shallow-copy-question/">解析C#深拷贝浅拷贝的问题</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/30</span>
+            <a class="archive-post-title" href="/2022/06/understand-csharp-data-type-system/">浅析C#类型系统模块</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/15</span>
+            <a class="archive-post-title" href="/2022/06/catlike-base-building-a-clock/">[译]Unity基础教程：(一)创建一个时钟</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/15</span>
+            <a class="archive-post-title" href="/2022/06/catlike-coding-unity-tutorial-license/">Catlike Coding Unity Tutorial License</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/15</span>
+            <a class="archive-post-title" href="/2022/01/symptoms-of-game/">[转]是谁谋杀了我们的游戏？</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/15</span>
+            <a class="archive-post-title" href="/2022/01/unity-manager-intro/">Unity项目架构设计与开发管理</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2021 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/29</span>
+            <a class="archive-post-title" href="/2021/12/project-list-clear/">保持Unity项目结构清晰的7种方法</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/29</span>
+            <a class="archive-post-title" href="/2021/12/hello-world/">你好 Hexo</a>
+        </li>
+    
+    </div>
+</div>
+
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+        
+            <span class="sidebar-tag-name" data-tags="unity-asset">
+                <span class="iconfont-archer">&#xe606;</span>
+                unity-asset
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="unity-project">
+                <span class="iconfont-archer">&#xe606;</span>
+                unity-project
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="unity-framework">
+                <span class="iconfont-archer">&#xe606;</span>
+                unity-framework
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="game-thinking">
+                <span class="iconfont-archer">&#xe606;</span>
+                game-thinking
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="unity-base">
+                <span class="iconfont-archer">&#xe606;</span>
+                unity-base
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="c#-data-operate">
+                <span class="iconfont-archer">&#xe606;</span>
+                c#-data-operate
+            </span>
+        
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+        缺失模块，请参考主题文档进行安装配置：https://github.com/fi3ework/hexo-theme-archer#%E5%AE%89%E8%A3%85%E4%B8%BB%E9%A2%98
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="Unity">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Unity
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Chat">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Chat
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Catlike Coding Unity Tutorial">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Catlike Coding Unity Tutorial
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="C#">
+            <span class="iconfont-archer">&#xe60a;</span>
+            C#
+        </span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+
+    </div>
+</div>
+
+        <!-- site-meta -->
+        <script>
+    var siteMetaRoot = "/"
+    if (siteMetaRoot === "undefined") {
+        siteMetaRoot = '/'
+    }
+    var siteMeta = {
+        url: "http://huozk.cn",
+        root: siteMetaRoot,
+        author: "Nil"
+    }
+</script>
+
+        <!-- import experimental options here -->
+        <!-- Custom Font -->
+
+    <!-- Check browser compatibility of CSS variables -->
+    <script>
+        if (browserSupportCSSVariables === undefined) {
+            var browserSupportCSSVariables = window.CSS && window.CSS.supports && window.CSS.supports('--a', 0);
+        }
+    </script>
+    <script>
+        if (browserSupportCSSVariables) {
+            var customFontName = 'JetBrains Mono,Noto Serif SC'
+            var customFontUrl = 'https://fonts.loli.net/css2?family=JetBrains+Mono:wght@300;400;500;700&amp;family=Noto+Serif+SC:wght@300;400;500;700&amp;display=swap'
+            if (!customFontName) {
+                console.log('Custom font name is not set or read failed');
+            }
+            if (!customFontUrl) {
+                console.log('Custom font url is not set or read failed');
+            }
+        } else {
+            console.error('Current browser doesn\'t support custom font.')
+        }
+    </script>
+    <script src="/scripts/customFontLoader.js?v=20211229" defer></script>
+
+
+        <!-- main func -->
+        <script src="/scripts/main.js?v=20211229"></script>
+        <!-- dark mode -->
+        <script src="/scripts/dark.js?v=20211229"></script>
+        <!-- fancybox -->
+        <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" defer></script>
+        <!-- algolia -->
+        
+        <!-- busuanzi -->
+        
+            <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+        
+        <!-- CNZZ -->
+        
+        <!-- async load share.js -->
+        
+            <script src="/scripts/share.js?v=20211229" async></script>
+        
+        <!-- mermaid -->
+        
+    </body>
+</html>

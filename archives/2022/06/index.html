@@ -434,6 +434,146 @@
             
         
         <article class="index-post">
+            <a class="abstract-title" href="/2022/06/understand-csharp-data-type-system/">
+                
+                <span class="abstract-title-text">浅析C#类型系统模块</span>
+            </a>
+            <div class="abstract-content">
+                <blockquote>
+<p>本文主要围绕C#语言来举例描述、但游戏开发也涉及Lua，所以其中会拿Lua来比较，引申。</p>
+</blockquote>
+<p>C# 是一种强类型语言。 每个变量和常量都有一个类型，每个求值的表达式也是如此。编译器使用类型信息来确保在代码中执行的所有操作都是类型安全的。 例如，如果声明 <code>int</code> 类型的变量，那么编译器允许在加法和减法运算中使用此变量。 如果尝试对 <code>bool</code> 类型的变量执行这些相同操作，则编译器将生成错误。</p>
+<p>除内置类型外，可以使用 <code>struct</code>、<code>class</code>、<code>interface</code>、<code>enum</code> 和 <code>record</code> 构造来创建自己的自定义类型。</p>
+<p>CTS中的每种类型被定义为值类型或引用类型。 这些类型包括.NET 类库中的所有自定义类型以及你自己的用户定义类型。 使用 <code>struct</code> 关键字定义的类型是值类型；所有内置数值类型都是 <code>structs</code>。 使用 <code>class</code> 或 <code>record</code> 关键字定义的类型是引用类型。引用类型和值类型遵循不同的编译时规则和运行时行为。</p>
+<ul>
+<li>类是引用类型。 创建类型的对象后，向其分配对象的变量仅保留对相应内存的引用。 将对象引用分配给新变量后，新变量会引用原始对象。 通过一个变量所做的更改将反映在另一个变量中，因为它们引用相同的数据。</li>
+<li>结构是值类型。 创建结构时，向其分配结构的变量保留结构的实际数据。 将结构分配给新变量时，会复制结构。 因此，新变量和原始变量包含相同数据的副本（共两个）。 对一个副本所做的更改不会影响另一个副本。</li>
+</ul>
+<p><img src="/images/202206/understand-csharp-1.webp" alt="data-type"></p>
+<h2 id="一、什么是值类型和引用类型"><a href="#一、什么是值类型和引用类型" class="headerlink" title="一、什么是值类型和引用类型"></a>一、什么是值类型和引用类型</h2><p>值类型（Value Types）和引用类型（Reference Types）是两种常见的数据类型分类，它们在内存中的存储和使用方式有所不同。</p>
+<ol>
+<li>值类型（Value Types）：<ul>
+<li>值类型的实例直接存储其实际的值，而不是对该值的引用(内存地址)；当将一个值类型赋值给另一个变量或作为参数传递时，将复制该值。</li>
+<li>值类型的赋值和操作是基于复制的，每个变量都有自己的独立值。</li>
+<li>值类型的存储通常发生在栈上，存储在变量的声明作用域内。</li>
+<li>值类型包括整数类型(byte&#x2F;sbyte&#x2F;short&#x2F;ushort&#x2F;int&#x2F;uint&#x2F;long&#x2F;ulong)、浮点数类型(float&#x2F;double)、字符类型(char)、布尔类型(bool)、枚举类型(enum)、结构体(struct)等。</li>
+</ul>
+</li>
+<li>引用类型（Reference Types）：<ul>
+<li>引用类型的实例存储在堆上；变量存储的是对该实例的引用(内存地址)，而不是实际的值；多个变量可以引用同一个对象。</li>
+<li>引用类型的赋值和操作是基于引用的，多个变量引用同一个对象，对对象的修改会影响所有引用它的变量。</li>
+<li>引用类型的存储通常发生在堆上，需要通过垃圾回收器来管理内存。</li>
+<li>引用类型包括类类型(class)、接口类型(interface)、委托类型(delegate)、字符串类型(string)等。</li>
+</ul>
+</li>
+</ol>
+<h3 id="1-1-他们的主要区别是什么？"><a href="#1-1-他们的主要区别是什么？" class="headerlink" title="1.1 他们的主要区别是什么？"></a>1.1 他们的主要区别是什么？</h3>
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2023/06/14">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/06/30</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="C#"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                C#
+            </span>
+        </span>
+    
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="c#-data-operate">c#-data-operate</a>
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+            
+        
+        <article class="index-post">
+            <a class="abstract-title" href="/2022/06/csharp-deep-and-shallow-copy-question/">
+                
+                <span class="abstract-title-text">解析C#深拷贝浅拷贝的问题</span>
+            </a>
+            <div class="abstract-content">
+                <p>深拷贝（Deep Copy）和浅拷贝（Shallow Copy）是在进行对象复制时使用的两种不同的拷贝方式。</p>
+<p>浅拷贝适用于对象较简单、不包含引用类型成员或共享引用对象值的情况。而深拷贝适用于对象较复杂、包含引用类型成员且需要独立拷贝引用对象的情况。</p>
+<p>一般情况下，默认是浅拷贝，而深拷贝则需要显式地操作或者通过特定的语言机制来实现。</p>
+<h3 id="什么是浅拷贝-Shallow-Copy"><a href="#什么是浅拷贝-Shallow-Copy" class="headerlink" title="什么是浅拷贝(Shallow Copy)"></a>什么是浅拷贝(Shallow Copy)</h3><ul>
+<li>浅拷贝是指创建一个新对象，将原始对象的成员变量的值复制到新对象中。</li>
+<li>对于引用类型的成员变量，浅拷贝只复制引用而不复制引用指向的对象本身。</li>
+<li>因此，新对象和原始对象将共享相同的引用对象，对引用对象的修改会影响到新对象和原始对象。</li>
+<li>浅拷贝可以通过语言提供的拷贝构造函数、赋值操作符等方式实现。</li>
+</ul>
+<h3 id="什么是深拷贝-Deep-Copy"><a href="#什么是深拷贝-Deep-Copy" class="headerlink" title="什么是深拷贝(Deep Copy)"></a>什么是深拷贝(Deep Copy)</h3><ul>
+<li>深拷贝是指创建一个新对象，并将原始对象的所有成员变量的值复制到新对象中，包括引用类型的成员变量。</li>
+<li>对于引用类型的成员变量，深拷贝会递归地复制引用指向的对象本身，而不仅仅是复制引用。</li>
+<li>因此，新对象和原始对象拥有独立的、完全相同的数据副本，对任一对象的修改都不会影响另一个对象。</li>
+<li>深拷贝可以通过自定义实现对象的 Clone 方法、序列化与反序列化等方式实现。</li>
+</ul>
+<h2 id="一、浅拷贝的实现"><a href="#一、浅拷贝的实现" class="headerlink" title="一、浅拷贝的实现"></a>一、浅拷贝的实现</h2><p>对于浅拷贝，可以使用C#的<code>MemberwiseClone</code>方法来实现。该方法会创建一个新对象，并将原始对象的字段值复制到新对象中。只需要在浅拷贝操作的类中重写<code>ICloneable</code>接口的<code>Clone</code>方法，并在其中直接调用<code>Object</code>的<code>MemberwiseClone</code>方法来完成浅拷贝。如果想借用此方法实现深拷贝，也可以在<code>Clone</code>方法中实现深拷贝的逻辑，即可。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyClass</span> : <span class="title">ICloneable</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> MyProperty &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">object</span> <span class="title">Clone</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.MemberwiseClone();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MyClass original = <span class="keyword">new</span> MyClass &#123; MyProperty = <span class="number">10</span> &#125;;</span><br><span class="line">MyClass copy = (MyClass)original.Clone();</span><br></pre></td></tr></table></figure>
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2023/06/14">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/06/30</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="C#"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                C#
+            </span>
+        </span>
+    
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="c#-data-operate">c#-data-operate</a>
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+            
+        
+        <article class="index-post">
             <a class="abstract-title" href="/2022/06/catlike-base-building-a-clock/">
                 
                 <span class="abstract-title-text">[译]Unity基础教程：(一)创建一个时钟</span>
@@ -695,7 +835,54 @@
         
         
         
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
     
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         
         
@@ -712,7 +899,7 @@
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 6
+        Total : 9
         </div>
         <!-- search  -->
         
@@ -726,6 +913,24 @@
             <div class="archive-year"> 2022 </div>
             <ul class="year-list">
             
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/15</span>
+            <a class="archive-post-title" href="/2022/07/import-unity-asset-settings/">外部资源文件导入Unity的一些优化设置</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/30</span>
+            <a class="archive-post-title" href="/2022/06/csharp-deep-and-shallow-copy-question/">解析C#深拷贝浅拷贝的问题</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/30</span>
+            <a class="archive-post-title" href="/2022/06/understand-csharp-data-type-system/">浅析C#类型系统模块</a>
+        </li>
+    
         
         <li class="archive-post-item">
             <span class="archive-post-date">06/15</span>
@@ -777,6 +982,11 @@
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
         
+            <span class="sidebar-tag-name" data-tags="unity-asset">
+                <span class="iconfont-archer">&#xe606;</span>
+                unity-asset
+            </span>
+        
             <span class="sidebar-tag-name" data-tags="unity-project">
                 <span class="iconfont-archer">&#xe606;</span>
                 unity-project
@@ -795,6 +1005,11 @@
             <span class="sidebar-tag-name" data-tags="unity-base">
                 <span class="iconfont-archer">&#xe606;</span>
                 unity-base
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="c#-data-operate">
+                <span class="iconfont-archer">&#xe606;</span>
+                c#-data-operate
             </span>
         
     </div>
@@ -821,6 +1036,11 @@
         <span class="sidebar-category-name" data-categories="Catlike Coding Unity Tutorial">
             <span class="iconfont-archer">&#xe60a;</span>
             Catlike Coding Unity Tutorial
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="C#">
+            <span class="iconfont-archer">&#xe60a;</span>
+            C#
         </span>
     
     </div>

@@ -19,27 +19,26 @@
         <meta name="keywords" content="game,unity,unreal,lua,c#">
     
     <meta name="description" content="">
-    <meta name="description" content="笔者是观摩刘钢先生讲解的Unity项目架构设计与开发管理后所总结记录的。 EmptyGo将所有的代码放到一个空的游戏对象中；使用 GameObject.Find() 来找到目标进行使用。架构设计的雏形实现，缺点是当我们的项目越来越大的时候难以灵活管理；不适合大型项目。 Simple GameManager1GameManager.Instance.playSound(&quot;menu&amp;quot">
+    <meta name="description" content="本文主要围绕C#语言来举例描述、但游戏开发也涉及Lua，所以其中会拿Lua来比较，引申。  C# 是一种强类型语言。 每个变量和常量都有一个类型，每个求值的表达式也是如此。编译器使用类型信息来确保在代码中执行的所有操作都是类型安全的。 例如，如果声明 int 类型的变量，那么编译器允许在加法和减法运算中使用此变量。 如果尝试对 bool 类型的变量执行这些相同操作，则编译器将生成错误。 除内置类">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Unity项目架构设计与开发管理">
-<meta property="og:url" content="http://huozk.cn/2022/01/unity-manager-intro/index.html">
+<meta property="og:title" content="浅析C#类型系统模块">
+<meta property="og:url" content="http://huozk.cn/2022/06/understand-csharp-data-type-system/index.html">
 <meta property="og:site_name" content="一剑光寒耀九州">
-<meta property="og:description" content="笔者是观摩刘钢先生讲解的Unity项目架构设计与开发管理后所总结记录的。 EmptyGo将所有的代码放到一个空的游戏对象中；使用 GameObject.Find() 来找到目标进行使用。架构设计的雏形实现，缺点是当我们的项目越来越大的时候难以灵活管理；不适合大型项目。 Simple GameManager1GameManager.Instance.playSound(&quot;menu&amp;quot">
+<meta property="og:description" content="本文主要围绕C#语言来举例描述、但游戏开发也涉及Lua，所以其中会拿Lua来比较，引申。  C# 是一种强类型语言。 每个变量和常量都有一个类型，每个求值的表达式也是如此。编译器使用类型信息来确保在代码中执行的所有操作都是类型安全的。 例如，如果声明 int 类型的变量，那么编译器允许在加法和减法运算中使用此变量。 如果尝试对 bool 类型的变量执行这些相同操作，则编译器将生成错误。 除内置类">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://huozk.cn/images/202201/strangeioc-framework.webp">
-<meta property="og:image" content="http://huozk.cn/images/202201/uframe.webp">
-<meta property="og:image" content="http://huozk.cn/images/202201/entitas-framework.webp">
-<meta property="article:published_time" content="2022-01-15T01:53:35.000Z">
-<meta property="article:modified_time" content="2023-05-25T11:22:25.174Z">
+<meta property="og:image" content="http://huozk.cn/images/202206/understand-csharp-1.webp">
+<meta property="og:image" content="http://huozk.cn/images/202206/understand-csharp-2.webp">
+<meta property="article:published_time" content="2022-06-30T15:05:52.000Z">
+<meta property="article:modified_time" content="2023-06-14T01:11:33.198Z">
 <meta property="article:author" content="Nil">
-<meta property="article:tag" content="unity-framework">
+<meta property="article:tag" content="c#-data-operate">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://huozk.cn/images/202201/strangeioc-framework.webp">
+<meta name="twitter:image" content="http://huozk.cn/images/202206/understand-csharp-1.webp">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <link rel="icon" href="/assets/favicon.ico">
     
-    <title>Unity项目架构设计与开发管理 · 一剑光寒耀九州</title>
+    <title>浅析C#类型系统模块 · 一剑光寒耀九州</title>
     <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
 /* This file is meant as a standalone workflow for
 - testing support for link[rel=preload]
@@ -269,7 +268,7 @@
                 <a href="/">一剑光寒耀九州</a>
             </div>
             <div class="post-title header-element">
-                <a href="#" class="post-name">Unity项目架构设计与开发管理</a>
+                <a href="#" class="post-name">浅析C#类型系统模块</a>
             </div>
         </div>
     
@@ -315,7 +314,7 @@
         <h1 class="intro-title">
             <!-- 主页  -->
             
-                Unity项目架构设计与开发管理
+                浅析C#类型系统模块
             <!-- 404 -->
             
         </h1>
@@ -339,15 +338,15 @@
             
         
         
-        <span class="post-category" data-categories="Unity"">
+        <span class="post-category" data-categories="C#"">
             <i class="fas fa-folder post-category-icon"></i>
             <span class="post-category-text">
-                Unity
+                C#
             </span>
         </span>
     
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="unity-framework">unity-framework</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags="c#-data-operate">c#-data-operate</a>
     
 </div>
 
@@ -355,13 +354,13 @@
                 <!-- 文章字数统计 -->
                 
                     <div class="post-intro-read">
-                        <span>Word count: <span class="post-count word-count">898</span>Reading time: <span class="post-count reading-time">3 min</span></span>
+                        <span>Word count: <span class="post-count word-count">4k</span>Reading time: <span class="post-count reading-time">13 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
                     <!-- 撰写日期 -->
                     <span class="iconfont-archer post-intro-calander">&#xe676;</span>
-                    <span class="post-intro-time">2022/01/15</span>
+                    <span class="post-intro-time">2022/06/30</span>
                     <!-- busuanzi -->
                     
                         <span id="busuanzi_container_page_pv" class="busuanzi-pv">
@@ -516,65 +515,117 @@
             <div class="container container-unloaded">
                 <main class="main post-page">
     <article class="article-entry">
-        <p>笔者是观摩刘钢先生讲解的<a target="_blank" rel="noopener" href="https://v.qq.com/x/page/d016340mkcu.html">Unity项目架构设计与开发管理</a>后所总结记录的。</p>
-<h2 id="EmptyGo"><a href="#EmptyGo" class="headerlink" title="EmptyGo"></a>EmptyGo</h2><p>将所有的代码放到一个空的游戏对象中；<br>使用 <code>GameObject.Find()</code> 来找到目标进行使用。<br>架构设计的雏形实现，缺点是当我们的项目越来越大的时候难以灵活管理；不适合大型项目。</p>
-<h2 id="Simple-GameManager"><a href="#Simple-GameManager" class="headerlink" title="Simple GameManager"></a>Simple GameManager</h2><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GameManager.Instance.playSound(<span class="string">&quot;menu&quot;</span>);</span><br></pre></td></tr></table></figure>
+        <blockquote>
+<p>本文主要围绕C#语言来举例描述、但游戏开发也涉及Lua，所以其中会拿Lua来比较，引申。</p>
+</blockquote>
+<p>C# 是一种强类型语言。 每个变量和常量都有一个类型，每个求值的表达式也是如此。编译器使用类型信息来确保在代码中执行的所有操作都是类型安全的。 例如，如果声明 <code>int</code> 类型的变量，那么编译器允许在加法和减法运算中使用此变量。 如果尝试对 <code>bool</code> 类型的变量执行这些相同操作，则编译器将生成错误。</p>
+<p>除内置类型外，可以使用 <code>struct</code>、<code>class</code>、<code>interface</code>、<code>enum</code> 和 <code>record</code> 构造来创建自己的自定义类型。</p>
+<p>CTS中的每种类型被定义为值类型或引用类型。 这些类型包括.NET 类库中的所有自定义类型以及你自己的用户定义类型。 使用 <code>struct</code> 关键字定义的类型是值类型；所有内置数值类型都是 <code>structs</code>。 使用 <code>class</code> 或 <code>record</code> 关键字定义的类型是引用类型。引用类型和值类型遵循不同的编译时规则和运行时行为。</p>
+<ul>
+<li>类是引用类型。 创建类型的对象后，向其分配对象的变量仅保留对相应内存的引用。 将对象引用分配给新变量后，新变量会引用原始对象。 通过一个变量所做的更改将反映在另一个变量中，因为它们引用相同的数据。</li>
+<li>结构是值类型。 创建结构时，向其分配结构的变量保留结构的实际数据。 将结构分配给新变量时，会复制结构。 因此，新变量和原始变量包含相同数据的副本（共两个）。 对一个副本所做的更改不会影响另一个副本。</li>
+</ul>
+<p><img src="/images/202206/understand-csharp-1.webp" alt="data-type"></p>
+<h2 id="一、什么是值类型和引用类型"><a href="#一、什么是值类型和引用类型" class="headerlink" title="一、什么是值类型和引用类型"></a>一、什么是值类型和引用类型</h2><p>值类型（Value Types）和引用类型（Reference Types）是两种常见的数据类型分类，它们在内存中的存储和使用方式有所不同。</p>
+<ol>
+<li>值类型（Value Types）：<ul>
+<li>值类型的实例直接存储其实际的值，而不是对该值的引用(内存地址)；当将一个值类型赋值给另一个变量或作为参数传递时，将复制该值。</li>
+<li>值类型的赋值和操作是基于复制的，每个变量都有自己的独立值。</li>
+<li>值类型的存储通常发生在栈上，存储在变量的声明作用域内。</li>
+<li>值类型包括整数类型(byte&#x2F;sbyte&#x2F;short&#x2F;ushort&#x2F;int&#x2F;uint&#x2F;long&#x2F;ulong)、浮点数类型(float&#x2F;double)、字符类型(char)、布尔类型(bool)、枚举类型(enum)、结构体(struct)等。</li>
+</ul>
+</li>
+<li>引用类型（Reference Types）：<ul>
+<li>引用类型的实例存储在堆上；变量存储的是对该实例的引用(内存地址)，而不是实际的值；多个变量可以引用同一个对象。</li>
+<li>引用类型的赋值和操作是基于引用的，多个变量引用同一个对象，对对象的修改会影响所有引用它的变量。</li>
+<li>引用类型的存储通常发生在堆上，需要通过垃圾回收器来管理内存。</li>
+<li>引用类型包括类类型(class)、接口类型(interface)、委托类型(delegate)、字符串类型(string)等。</li>
+</ul>
+</li>
+</ol>
+<h3 id="1-1-他们的主要区别是什么？"><a href="#1-1-他们的主要区别是什么？" class="headerlink" title="1.1 他们的主要区别是什么？"></a>1.1 他们的主要区别是什么？</h3><ul>
+<li>值类型存储实际值本身，而引用类型存储对对象的引用(内存地址)。</li>
+<li>值类型的复制是值的复制，每个变量拥有独立的值，而引用类型的复制是引用的复制，多个变量引用同一个对象。</li>
+<li>值类型存储在栈上，变量的生命周期与其作用域相对应，而引用类型存储在堆上，由垃圾回收器管理内存。</li>
+<li>对值类型的操作是基于值的，而对引用类型的操作是基于引用(内存地址)的。</li>
+<li>值类型的变量通常存储在栈上；而引用类型的对象存储在堆上，而变量本身存储在栈上，用于存储对象的引用。</li>
+<li>赋值或传递值类型的变量时，会复制变量的值。而赋值或传递引用类型的变量时，会复制对象的引用，指向同一对象。</li>
+<li>值类型的变量在声明时会有一个默认值，如 int 类型的默认值为 0。而引用类型的变量在声明时默认为 null，表示未引用任何对象。</li>
+<li>值类型不支持继承和多态，因为它们是按值存储的。而引用类型可以通过继承和多态实现面向对象的特性。</li>
+</ul>
+<p>需要注意的是，C# 中的某些引用类型具有值语义，如字符串类型(string)和结构体(struct)。这些类型在某些方面类似于引用类型，但也具有值类型的特征，如字符串的不可变性和结构体的值复制。例如在结构体中包含引用类型变量，通过实例化的复制后，两份结构体中的引用变量指向的是同一个引用地址(内存地址)。</p>
+<h3 id="1-2-lua中有类似C-之类值类型、引用类型的概念吗"><a href="#1-2-lua中有类似C-之类值类型、引用类型的概念吗" class="headerlink" title="1.2 lua中有类似C#之类值类型、引用类型的概念吗"></a>1.2 lua中有类似C#之类值类型、引用类型的概念吗</h3><p>在 Lua 中，所有的数据都是以值的形式存在，而不区分值类型和引用类型。Lua 中的值可以直接存储在变量中，或者通过引用传递。不过，Lua 中的 table 类型可以用于模拟字典、数组等数据结构，但它并不是引用类型，而是一种通用的数据容器。Lua中，变量的赋值和传递都是基于值的拷贝，而不是引用。当一个变量赋值给另一个变量时，会将变量的值复制一份。如果复制的是一个 table 类型的值，那么实际上是复制了 table 的引用，而不是拷贝整个 table。</p>
+<p>即Lua中，不需要像 C# 中那样显式区分值类型和引用类型，而是直接处理变量的值。这也意味着在函数传参或赋值操作时，不会产生类似值类型和引用类型的语义和性能消耗。</p>
+<h2 id="二、类型转换过程中的装箱、拆箱"><a href="#二、类型转换过程中的装箱、拆箱" class="headerlink" title="二、类型转换过程中的装箱、拆箱"></a>二、类型转换过程中的装箱、拆箱</h2><p>装箱是将值类型转换为 <code>object</code> 类型或由此值类型实现的任何接口类型的过程。 常见语言运行时 (CLR) 对值类型进行装箱时，会将值包装在 System.Object 实例中并将其存储在托管堆中。 取消装箱将从对象中提取值类型。装箱是隐式的；取消装箱是显式的。</p>
+<p><img src="/images/202206/understand-csharp-2.webp" alt="boxing-and-unboxing"></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//装箱</span></span><br><span class="line"><span class="built_in">int</span> i = <span class="number">123</span>;</span><br><span class="line"><span class="built_in">object</span> o = (<span class="built_in">object</span>)i;  <span class="comment">// explicit boxing</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//拆箱</span></span><br><span class="line"><span class="built_in">int</span> i = <span class="number">123</span>;      <span class="comment">// a value type</span></span><br><span class="line"><span class="built_in">object</span> o = i;     <span class="comment">// boxing</span></span><br><span class="line"><span class="built_in">int</span> j = (<span class="built_in">int</span>)o;   <span class="comment">// unboxing</span></span><br></pre></td></tr></table></figure>
 
-<p>优点是： 是把EmptyGO做成一个单例来使用；比较适合小型项目；空物体进行全局引用。 缺点是： 把所有的逻辑都放在一个脚本中，不利于编译；而且会造成单一文件过于庞大；NO 即插即用。</p>
-<h2 id="Manager-Of-Managers"><a href="#Manager-Of-Managers" class="headerlink" title="Manager Of Managers"></a>Manager Of Managers</h2><p>类似于分级结构，各司其职；比如音频管理，场景管理，关卡管理等，每一个都是一个单例脚本，配合使用。结构相对清晰。</p>
-<ul>
-<li>MainManager</li>
-<li>EventManager：消息传递管理</li>
-<li>AudioManager：音效管理</li>
-<li>GUIManager：图形视图管理</li>
-<li>PoolManager：GO管理</li>
-<li>LevelManager： 关卡管理</li>
-<li>GameManager：核心机制管理</li>
-<li>SaveManager：游戏进度管理</li>
-<li>MenuManager：菜单行为动画管理</li>
-<li>…</li>
+<p>在 C# 中，装箱（Boxing）和拆箱（Unboxing）是值类型（Value Type）和引用类型（Reference Type）之间的相互转换操作。</p>
+<ol>
+<li>装箱（Boxing）：将值类型转换为引用类型的过程<ul>
+<li>当值类型需要被赋值给一个 Object 类型的变量，或者作为参数传递给接受 Object 类型参数的方法时，会发生装箱操作。</li>
+<li>装箱操作会创建一个引用类型的对象，并将值类型的值复制到该对象中。装箱后，该值类型就被封装在引用类型对象中，可以按引用方式操作。</li>
 </ul>
-<h2 id="MVCS（StrangeIOC）"><a href="#MVCS（StrangeIOC）" class="headerlink" title="MVCS（StrangeIOC）"></a>MVCS（StrangeIOC）</h2><p><img src="/images/202201/strangeioc-framework.webp" alt="Unity3D-StrongeIOC框架结构图">  </p>
-<p>Strange是一个超轻量级且高度可扩展的控制反转控制（IoC）框架，专为C＃和Unity编写。 它包含以下功能，其中大部分是可选的：</p>
-<ul>
-<li>一个核心绑定框架，几乎可以让你将一个或多个任何东西绑定到一个或多个其他任何东西。</li>
-<li>依赖注入</li>
-<li>反射绑定显著降低了采用反射效率的开销</li>
-<li>共享事件系统，EventDispatcher 和 Signals。</li>
-<li>MonoBehaviour 调配</li>
-<li>可选的MVCS（模型&#x2F;视图&#x2F;控制器&#x2F;服务）结构</li>
-<li>…</li>
+</li>
+<li>拆箱（Unboxing）：将装箱后的引用类型转换为值类型的过程<ul>
+<li>当需要从装箱后的引用类型中获取值类型的值，或者将其赋值给值类型变量时，会发生拆箱操作。</li>
+<li>拆箱操作将引用类型对象中封装的值类型数据提取出来，并将其赋值给值类型变量。</li>
 </ul>
-<p>这个框架的想法很有意思；可以研究一下它的原理即源码。 地址：<a target="_blank" rel="noopener" href="https://github.com/strangeioc/strangeioc">https://github.com/strangeioc/strangeioc</a></p>
-<h2 id="MVVM（uFrame）"><a href="#MVVM（uFrame）" class="headerlink" title="MVVM（uFrame）"></a>MVVM（uFrame）</h2><p><img src="/images/202201/uframe.webp" alt="Unity3D-uFrame框架结构">  </p>
-<p>uFrame 是为 Unity Engine 设计的 MVVM &#x2F; MV * 框架。它配备了大量功能，包括图形界面 &#x2F; 图表引擎，可生成代码甚至处理一些重新分解。图形界面显著提高所有团队成员开发和实施一致编码模型的效率。随着微软全息镜头的崛起和Unity的跨平台功能，uFrame 是构建下一个大型应用程序或游戏的终极解决方案。 包含以下功能：</p>
-<ul>
-<li>高质量的图形引擎</li>
-<li>可编辑的代码生成模板</li>
-<li>UGUI绑定</li>
-<li>IOC &#x2F;依赖注入</li>
-<li>完整的MV *实现 – 事件聚合</li>
-<li>场景管理（将场景加载为具有附加加载的预制件）</li>
-<li>在极大型项目上测试运行</li>
-<li>开源框架</li>
-<li>…</li>
+</li>
+</ol>
+<p>装箱和拆箱操作涉及将数据从值类型复制到引用类型对象中以及从引用类型对象中提取数据的过程。这些操作会涉及数据复制和内存分配，因此在性能上相对较低效。</p>
+<h3 id="2-1-如何避免不必要的装箱拆箱操作？"><a href="#2-1-如何避免不必要的装箱拆箱操作？" class="headerlink" title="2.1 如何避免不必要的装箱拆箱操作？"></a>2.1 如何避免不必要的装箱拆箱操作？</h3><ol>
+<li>使用泛型：<ul>
+<li>在需要存储值类型的集合中，尽量使用泛型集合（如 **<code>List&lt;T&gt;</code><strong>、</strong><code>Dictionary&lt;TKey, TValue&gt;</code>**）而不是非泛型集合（如 **<code>ArrayList</code><strong>、</strong><code>Hashtable</code>**）。泛型集合在存储值类型时不会触发装箱操作。</li>
+<li>在定义接口或方法时，尽量使用泛型类型参数，以便处理值类型和引用类型的数据，避免在接口或方法中进行装箱和拆箱。</li>
 </ul>
-<h2 id="实体组件系统（ECS）"><a href="#实体组件系统（ECS）" class="headerlink" title="实体组件系统（ECS）"></a>实体组件系统（ECS）</h2><p>在2018年，Unity又重点推荐ECS；ECS是一种编写代码的方式，专注于您正在解决的实际问题：组成游戏的数据和行为。其中心为Entity，Component，System。除了出于设计原因更好地接近游戏编程之外，使用ECS可以使您更好的利用Unity的C＃job系统和Burst Compiler，充分利用当今的多核处理器。<br>这里非常推荐比较成熟的一个三方方案 <a target="_blank" rel="noopener" href="https://github.com/strangeioc/strangeioc">Entitas</a>,很好的解决了代码生成的问题。<br><img src="/images/202201/entitas-framework.webp" alt="entitas 结构图"></p>
+</li>
+<li>对于需要在值类型中表示空值的情况，可以使用值类型的可空类型（如 **<code>int?</code><strong>、</strong><code>bool?</code>**），而不是将值类型装箱为引用类型（如 **<code>Nullable&lt;int&gt;</code>**）。可空类型不会触发装箱操作。</li>
+<li>某些API提供了直接操作值类型的方法，如 <strong><code>BitConverter</code></strong> 类用于将基本数据类型直接转换为字节数组，而不需要装箱操作。</li>
+<li>避免将值类型直接赋值给Object类型变量，尽量使用值类型的具体类型或泛型类型参数进行操作。</li>
+<li>使用装箱拆箱优化技术，如缓存装箱对象、使用对象池等，可以减少装箱和拆箱操作的频率，提高性能。</li>
+</ol>
+<h2 id="三、深浅拷贝操作"><a href="#三、深浅拷贝操作" class="headerlink" title="三、深浅拷贝操作"></a>三、深浅拷贝操作</h2><p>深拷贝（Deep Copy）和浅拷贝（Shallow Copy）是在进行对象复制时使用的两种不同的拷贝方式。</p>
 <ul>
-<li>Entity 是实例,作为承载组件的载体,也是框架中维护对象的实体.</li>
-<li>Component 只包含数据,具备这个组件便具有这个功能.</li>
-<li>System 作为逻辑维护,维护对应的组件执行相关操作.</li>
+<li>浅拷贝(Shallow Copy)：是指创建一个新对象，将原始对象的成员变量的值复制到新对象中。对于引用类型的成员变量，浅拷贝只复制引用而不复制引用指向的对象本身。因此，新对象和原始对象将共享相同的引用对象，对引用对象的修改会影响到新对象和原始对象。</li>
+<li>深拷贝(Deep Copy)：是指创建一个新对象，并将原始对象的所有成员变量的值复制到新对象中，包括引用类型的成员变量。对于引用类型的成员变量，深拷贝会递归地复制引用指向的对象本身，而不仅仅是复制引用。因此，新对象和原始对象拥有独立的、完全相同的数据副本，对任一对象的修改都不会影响另一个对象。</li>
 </ul>
-<p>而且使用ECS，可以让你从面向对象转向数据导向设计，这意味着重用代码更容易，并且更容易让其他人掌握并做出贡献。</p>
+<p>浅拷贝适用于对象较简单、不包含引用类型成员或共享引用对象值的情况。而深拷贝适用于对象较复杂、包含引用类型成员且需要独立拷贝引用对象的情况。</p>
+<p>一般情况下，默认是浅拷贝，而深拷贝则需要显式地操作或者通过特定的语言机制来实现。</p>
+<p>深浅拷贝操作带来最大的好处就是保证了数据的独立性，避免共享数据和不受影响的修改操作。</p>
+<p>在lua中，我们可以通过一些技巧实现深浅拷贝的操作；对于浅拷贝可以通过<code>table</code>来实现，当将一个表赋值给另一个变量时，实际上是将表的引用复制给了新变量。这样，新变量和原变量指向同一个表，对一个变量的修改会影响到另一个变量。这种方式类似于浅拷贝的行为。</p>
+<p>而对于深拷贝，需要通过一些库或函数来递归复制表及其嵌套的表。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> originalTable = &#123;a = <span class="number">1</span>, b = <span class="number">2</span>&#125;</span><br><span class="line"><span class="keyword">local</span> deepCopy = <span class="built_in">table</span>.deepCopy(originalTable)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">table.deepCopy</span><span class="params">(original)</span></span></span><br><span class="line">    <span class="keyword">local</span> copy = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> key, value <span class="keyword">in</span> <span class="built_in">pairs</span>(original) <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">type</span>(value) == <span class="string">&quot;table&quot;</span> <span class="keyword">then</span></span><br><span class="line">            copy[key] = <span class="built_in">table</span>.deepCopy(value) <span class="comment">-- 递归复制嵌套表</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            copy[key] = value <span class="comment">-- 复制普通值</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">return</span> copy</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="四、变量在堆栈中的操作"><a href="#四、变量在堆栈中的操作" class="headerlink" title="四、变量在堆栈中的操作"></a>四、变量在堆栈中的操作</h2><p>一般情况下，变量的存储和操作涉及到内存中的堆栈和堆两个概念。</p>
+<p>内存堆栈和堆的存在是为了满足不同类型的数据存储和访问需求。堆栈适用于临时数据和函数调用，提供了高效的自动内存管理机制。而堆适用于动态分配的数据，虽然需要手动管理内存，但可以存储更大、更复杂的数据结构，并提供了灵活的空间分配。两者的结合使得计算机能够高效地管理和利用内存资源。</p>
+<h3 id="4-1-值类型和引用类型与堆栈的关系"><a href="#4-1-值类型和引用类型与堆栈的关系" class="headerlink" title="4.1 值类型和引用类型与堆栈的关系"></a>4.1 值类型和引用类型与堆栈的关系</h3><ol>
+<li>存储位置：值类型的变量通常存储在栈（Stack）上，而引用类型的对象存储在堆（Heap）上。栈和堆是内存中的两个不同的区域。</li>
+<li>内存管理：栈上的值类型变量由编译器自动管理，当超出作用域时会自动释放。栈采用先进后出（LIFO）的方式进行分配和释放。而引用类型的对象则由垃圾回收器（Garbage Collector）在堆上进行管理，当没有引用指向对象时，垃圾回收器会自动回收对象的内存。</li>
+<li>复制行为：将值类型的变量赋值给另一个变量时，会复制该值的副本，每个变量都有自己的独立内存空间。而将引用类型的变量赋值给另一个变量时，复制的是对象的引用（内存地址），两个变量指向同一个对象。</li>
+<li>性能和内存开销：栈上的操作速度较快，分配和释放内存的开销较小。对于值类型，变量的生命周期较短，栈的管理方式更适合。而堆上的操作速度较慢，分配和释放内存的开销较大。引用类型的对象的生命周期较长，需要动态分配和释放内存，因此存储在堆上。</li>
+</ol>
+<p>引用类型的变量本身存储在栈上，用于存储对象的引用，而对象的实际数据存储在堆上。这意味着即使是引用类型的变量，在栈上存储的是一个指向堆上对象的引用。如<code>int[] arr = &#123;1, 2, 3&#125;</code>;变量<code>arr(数组名)</code>存储在栈中，变量<code>arr的值(数组元素)</code>存储在堆中(普通结构)。</p>
+<h3 id="4-2-堆栈中的一些概念"><a href="#4-2-堆栈中的一些概念" class="headerlink" title="4.2 堆栈中的一些概念"></a>4.2 堆栈中的一些概念</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a= <span class="number">0</span>;<span class="comment">//全局初始化区</span></span><br><span class="line"><span class="type">char</span>*p1;<span class="comment">//全局未初始化区</span></span><br><span class="line"><span class="built_in">main</span>()</span><br><span class="line">&#123;</span><br><span class="line">		<span class="type">int</span> b;<span class="comment">//栈</span></span><br><span class="line">		<span class="type">char</span> s[]= <span class="string">&quot;abc&quot;</span>;<span class="comment">// 栈</span></span><br><span class="line">		<span class="type">char</span>*p2;<span class="comment">//栈</span></span><br><span class="line">		<span class="type">char</span>*p3= <span class="string">&quot;123456&quot;</span>;<span class="comment">//123456\0在常量区，p3在栈上。</span></span><br><span class="line">		staticint c=<span class="number">0</span>;<span class="comment">//全局（静态）初始化区</span></span><br><span class="line">        p1= (<span class="type">char</span>*)<span class="built_in">malloc</span>(<span class="number">10</span>);<span class="comment">//堆</span></span><br><span class="line">        p2= (<span class="type">char</span>*)<span class="built_in">malloc</span>(<span class="number">20</span>);<span class="comment">//堆</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>栈中分配局部变量空间，堆区用于分配程序员申请的内存空间，静态区是分配静态变量，全局变量空间的；只读区是分配常量和程序代码空间的；以及其他一些分区。</li>
+<li>栈区-由编译器自动分配和释放，一般存放函数的参数值、局部变量的值等（速度较快）；堆区-由程序员分配及释放，若程序员不释放，程序结束后可能由OS回收（速度比较慢，而且容易产生内存碎片）；</li>
+</ul>
+<h2 id="五、end"><a href="#五、end" class="headerlink" title="五、end"></a>五、end</h2><p>对于强类型语言，很好的理解值类型和引用类型可以帮助我们更好的去选择，和使用。从而避免一些性能消耗的操作，进而实现程序上的优化。例如装箱拆箱就是一个很耗的过程，在处理的时候要很小心；而在使用的过程中了解内存中分配，可以进一步帮助我们控制内存占用和降低内存泄漏的风险，这点对游戏开发来说还是很重要的。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/csharp/fundamentals/types/">C# 类型系统 | Microsoft Learn</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/34681978">堆栈的知识 - 知乎 (zhihu.com)</a></li>
+</ul>
 
     </article>
     <!-- license -->
     
         <div class="license-wrapper">
             <p>Author：<a href="http://huozk.cn">Nil</a>
-            <p>Link：<a href="http://huozk.cn/2022/01/unity-manager-intro/">http://huozk.cn/2022/01/unity-manager-intro/</a>
-            <p>Publish date：<a href="http://huozk.cn/2022/01/unity-manager-intro/">January 15th 2022, 9:53:35 am</a>
-            <p>Update date：<a href="http://huozk.cn/2022/01/unity-manager-intro/">May 25th 2023, 7:22:25 pm</a>
+            <p>Link：<a href="http://huozk.cn/2022/06/understand-csharp-data-type-system/">http://huozk.cn/2022/06/understand-csharp-data-type-system/</a>
+            <p>Publish date：<a href="http://huozk.cn/2022/06/understand-csharp-data-type-system/">June 30th 2022, 11:05:52 pm</a>
+            <p>Update date：<a href="http://huozk.cn/2022/06/understand-csharp-data-type-system/">June 14th 2023, 9:11:33 am</a>
             <p>License：本文采用<a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -583,16 +634,16 @@
         <li class="next">
             
                 <div class="nextSlogan">Next Post</div>
-                <a href="/2022/01/symptoms-of-game/" title="[转]是谁谋杀了我们的游戏？">
-                    <div class="nextTitle">[转]是谁谋杀了我们的游戏？</div>
+                <a href="/2022/07/import-unity-asset-settings/" title="外部资源文件导入Unity的一些优化设置">
+                    <div class="nextTitle">外部资源文件导入Unity的一些优化设置</div>
                 </a>
             
         </li>
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href="/2021/12/project-list-clear/" title="保持Unity项目结构清晰的7种方法">
-                    <div class="prevTitle">保持Unity项目结构清晰的7种方法</div>
+                <a href="/2022/06/csharp-deep-and-shallow-copy-question/" title="解析C#深拷贝浅拷贝的问题">
+                    <div class="prevTitle">解析C#深拷贝浅拷贝的问题</div>
                 </a>
             
         </li>
@@ -750,7 +801,7 @@
                 <div class="toc-catalog">
                     <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
                 </div>
-                <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#EmptyGo"><span class="toc-number">1.</span> <span class="toc-text">EmptyGo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Simple-GameManager"><span class="toc-number">2.</span> <span class="toc-text">Simple GameManager</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Manager-Of-Managers"><span class="toc-number">3.</span> <span class="toc-text">Manager Of Managers</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVCS%EF%BC%88StrangeIOC%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">MVCS（StrangeIOC）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVVM%EF%BC%88uFrame%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">MVVM（uFrame）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E4%BD%93%E7%BB%84%E4%BB%B6%E7%B3%BB%E7%BB%9F%EF%BC%88ECS%EF%BC%89"><span class="toc-number">6.</span> <span class="toc-text">实体组件系统（ECS）</span></a></li></ol>
+                <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF%E5%80%BC%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.</span> <span class="toc-text">一、什么是值类型和引用类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%BB%96%E4%BB%AC%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 他们的主要区别是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-lua%E4%B8%AD%E6%9C%89%E7%B1%BB%E4%BC%BCC-%E4%B9%8B%E7%B1%BB%E5%80%BC%E7%B1%BB%E5%9E%8B%E3%80%81%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%A6%82%E5%BF%B5%E5%90%97"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 lua中有类似C#之类值类型、引用类型的概念吗</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E8%A3%85%E7%AE%B1%E3%80%81%E6%8B%86%E7%AE%B1"><span class="toc-number">2.</span> <span class="toc-text">二、类型转换过程中的装箱、拆箱</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E4%B8%8D%E5%BF%85%E8%A6%81%E7%9A%84%E8%A3%85%E7%AE%B1%E6%8B%86%E7%AE%B1%E6%93%8D%E4%BD%9C%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 如何避免不必要的装箱拆箱操作？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%B7%B1%E6%B5%85%E6%8B%B7%E8%B4%9D%E6%93%8D%E4%BD%9C"><span class="toc-number">3.</span> <span class="toc-text">三、深浅拷贝操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%8F%98%E9%87%8F%E5%9C%A8%E5%A0%86%E6%A0%88%E4%B8%AD%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="toc-number">4.</span> <span class="toc-text">四、变量在堆栈中的操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%80%BC%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%A0%86%E6%A0%88%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">4.1.</span> <span class="toc-text">4.1 值类型和引用类型与堆栈的关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%A0%86%E6%A0%88%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5"><span class="toc-number">4.2.</span> <span class="toc-text">4.2 堆栈中的一些概念</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81end"><span class="toc-number">5.</span> <span class="toc-text">五、end</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-number">6.</span> <span class="toc-text">参考链接</span></a></li></ol>
             </div>
         
         <!-- sidebar -->
